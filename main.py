@@ -9,28 +9,46 @@ from kivy.properties import (
 from kivy.core.window import Window
 from kivy.core.audio import SoundLoader
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.label import CoreLabel
+import random
 
-class Charactor(Widget):
+class GameMain(Widget):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._keyboard = Window.request_keyboard(self._on_keyboard_closed,self)
+
+        self._keyboard = Window.request_keyboard(
+            self._on_keyboard_closed, self)
         self._keyboard.bind(on_key_down=self._on_key_down)
         self._keyboard.bind(on_key_up=self._on_key_up)
-        
+
+        self._score_label = CoreLabel(text="Score: 0",font_size=20)
+        self._score_label.refresh()
+        self._score = 0
+
+        self.register_event_type("on_frame")
+
+        with self.canvas:
+            Rectangle(source="image/background.png", pos=(0, 0),
+                      size=(Window.width, Window.height))
+            self._score_instruction = Rectangle(texture=self._score_label.texture, pos=(
+                0, Window.height - 50), size=self._score_label.texture.size)
+
+        self.keysPressed = set()
+        self._entities = set()
+
+        Clock.schedule_interval(self.on_frame, 0)
+
         #Sound
         self.sound = SoundLoader.load('audio/sound.mp3')
         self.sound.loop = True
         self.sound.play()
-        # Clock.schedule_interval(self.check_sound, 1)
 
-        #Charactor animate State
-        self.playerState = 0 
-        with self.canvas:
-            self.player = Rectangle(source="image/playerfr1.png",pos=(700,500),size=(240,200))
-
-        self.keysPressed = set()
-        Clock.schedule_interval(self.move_step,1/30)
-
+        
+    #Spawn_enemies 
+    
+    def on_frame(self, dt):
+        pass
+        
     def _on_keyboard_closed(self):
         self._keyboard.unbind(on_key_down=self._on_key_down)
         self._keyboard.unbind(on_key_up=self._on_key_up)
@@ -43,15 +61,68 @@ class Charactor(Widget):
         text = keycode[1]
         if text in self.keysPressed:
             self.keysPressed.remove(text)
+    
+    def add_entity(self, entity):
+        self._entities.add(entity)
+        self.canvas.add(entity._instruction)
 
+
+class Entity(object):
+    def __init__(self):
+        self._pos = (0, 0)
+        self._size = (250, 200)
+        self._source = "image/playerfr1.png"
+        self._instruction = Rectangle(
+            pos=self._pos, size=self._size, source=self._source)
+
+    @property
+    def pos(self):
+        return self._pos
+
+    @pos.setter
+    def pos(self, value):
+        self._pos = value
+        self._instruction.pos = self._pos
+
+    @property
+    def size(self):
+        return self._size
+
+    @size.setter
+    def size(self, value):
+        self._size = value
+        self._instruction.size = self._size
+
+    @property
+    def source(self):
+        return self._source
+
+    @source.setter
+    def source(self, value):
+        self._source = value
+        self._instruction.source = self._source
+
+class Player(Entity):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.playerState = 0 
+        self.source = "image/player.png"
+        game.bind(on_frame=self.move_step)
+        self.pos = (400, 0)
+
+        self.keysPressed = set()
+        Clock.schedule_interval(self.move_step,1/30)
+
+    
+    # Move
     def move_step(self,dt):
-        currentpic = self.player.source
-        currentx = self.player.pos[0]
-        currenty = self.player.pos[1]
+        currentpic = self.source
+        currentx = self.pos[0]
+        currenty = self.pos[1]
 
         step_size = 500 * dt
 
-        if "w" in self.keysPressed:
+        if "w" in game.keysPressed:
             if self.playerState < 7:
                 currentpic = F"image/playerfr{self.playerState + 1}.png"
                 self.playerState += 1
@@ -59,7 +130,7 @@ class Charactor(Widget):
                 self.playerState = 0
                 currentpic = F"image/playerfr{self.playerState + 1}.png"
             currenty += step_size
-        if "s" in self.keysPressed:
+        if "s" in game.keysPressed:
             if self.playerState < 7:
                 currentpic = F"image/playerfr{self.playerState + 1}.png"
                 self.playerState += 1
@@ -67,7 +138,7 @@ class Charactor(Widget):
                 self.playerState = 0
                 currentpic = F"image/playerfr{self.playerState + 1}.png"
             currenty -= step_size
-        if "a" in self.keysPressed:
+        if "a" in game.keysPressed:
             if self.playerState < 7:
                 currentpic = F"image/playerfr{self.playerState + 1}.png"
                 self.playerState += 1
@@ -75,7 +146,7 @@ class Charactor(Widget):
                 self.playerState = 0
                 currentpic = F"image/playerfr{self.playerState + 1}.png"
             currentx -= step_size
-        if "d" in self.keysPressed:
+        if "d" in game.keysPressed:
             if self.playerState < 7:
                 currentpic = F"image/playerfr{self.playerState + 1}.png"
                 self.playerState += 1
@@ -84,18 +155,20 @@ class Charactor(Widget):
                 currentpic = F"image/playerfr{self.playerState + 1}.png"
             currentx += step_size
 
-        self.player.pos = (currentx,currenty)
-        self.player.source = currentpic
-    
-    # Sound
-    # def check_sound(self, dt = None):
-    #     self.sound.play()
+        self.pos = (currentx,currenty)
+        self.source = currentpic
 
     
-class GameMain(Widget):
-    player = ObjectProperty(None)
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+
+
+
+game = GameMain()
+game.player = Player()
+game.player.pos = (Window.width - Window.width/3, 0)
+game.add_entity(game.player)
+
+# enemy = Items((500,500))
+# game.add_entity(enemy)
 
 
 
@@ -103,14 +176,7 @@ class GameMain(Widget):
 
 class MyApp(App):
     def build(self): #backGround
-        Window.clearcolor = (1,1,1,1)
-        # sound = SoundLoader.load('audio/sound.mp3')
-        # if sound:
-        #     print("Sound found at %s" % sound.source)
-        #     print("Sound is %.3f seconds" % sound.length)
-        #     sound.play()
-
-        return Charactor()
+        return game
 
 
 if __name__ == "__main__":
