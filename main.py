@@ -7,6 +7,8 @@ from kivy.properties import (
     NumericProperty, ReferenceListProperty, ObjectProperty
 )
 from kivy.core.window import Window
+from kivy.core.audio import SoundLoader
+from kivy.uix.boxlayout import BoxLayout
 
 class Charactor(Widget):
     def __init__(self, **kwargs):
@@ -14,8 +16,9 @@ class Charactor(Widget):
         self._keyboard = Window.request_keyboard(self._on_keyboard_closed,self)
         self._keyboard.bind(on_key_down=self._on_key_down)
         self._keyboard.bind(on_key_up=self._on_key_up)
-        
-        self.playerState = 0
+
+        self.sound = SoundLoader.load('audio/sound.mp3')
+        self.sound.play()
 
         with self.canvas:
             self.player = Rectangle(source="image/playerfr1.png",pos=(700,500),size=(240,200))
@@ -85,10 +88,21 @@ class GameMain(Widget):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
+
+
+
+
 class MyApp(App):
     def build(self):
         Window.clearcolor = (1,1,1,1)
+        # sound = SoundLoader.load('audio/sound.mp3')
+        # if sound:
+        #     print("Sound found at %s" % sound.source)
+        #     print("Sound is %.3f seconds" % sound.length)
+        #     sound.play()
+
         return Charactor()
+
 
 if __name__ == "__main__":
     app = MyApp()
