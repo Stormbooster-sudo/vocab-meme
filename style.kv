@@ -1,7 +1,12 @@
 <GameMain>:
+    player : player_charactor
+    size: 250,250
     canvas.before:
         Color:
             rgba: 1, 1, 1, 1
         Rectangle:
             pos: self.pos
             size: self.size
+    Charactor:
+        id: player_charactor
+        center: self.parent.center
