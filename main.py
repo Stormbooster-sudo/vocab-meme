@@ -10,9 +10,11 @@ class GameWidget(Widget):
         self._keyboard = Window.request_keyboard(self._on_keyboard_closed,self)
         self._keyboard.bind(on_key_down=self._on_key_down)
         self._keyboard.bind(on_key_up=self._on_key_up)
+        
+        self.playerState = 0
 
         with self.canvas:
-            self.player = Rectangle(source="image/player.png",pos=(700,500),size=(120,100))
+            self.player = Rectangle(source="image/playerfr1.png",pos=(700,500),size=(240,200))
 
         self.keysPressed = set()
 
@@ -36,18 +38,40 @@ class GameWidget(Widget):
         currentx = self.player.pos[0]
         currenty = self.player.pos[1]
 
-        step_size = 1000 * dt
+        step_size = 500 * dt
 
         if "w" in self.keysPressed:
+            if self.playerState < 7:
+                currentpic = F"image/playerfr{self.playerState + 1}.png"
+                self.playerState += 1
+            else:
+                self.playerState = 0
+                currentpic = F"image/playerfr{self.playerState + 1}.png"
             currenty += step_size
         if "s" in self.keysPressed:
+            if self.playerState < 7:
+                currentpic = F"image/playerfr{self.playerState + 1}.png"
+                self.playerState += 1
+            else:
+                self.playerState = 0
+                currentpic = F"image/playerfr{self.playerState + 1}.png"
             currenty -= step_size
         if "a" in self.keysPressed:
+            if self.playerState < 7:
+                currentpic = F"image/playerfr{self.playerState + 1}.png"
+                self.playerState += 1
+            else:
+                self.playerState = 0
+                currentpic = F"image/playerfr{self.playerState + 1}.png"
             currentx -= step_size
-            currentpic = "image/player.png"
         if "d" in self.keysPressed:
+            if self.playerState < 7:
+                currentpic = F"image/playerfr{self.playerState + 1}.png"
+                self.playerState += 1
+            else:
+                self.playerState = 0
+                currentpic = F"image/playerfr{self.playerState + 1}.png"
             currentx += step_size
-            currentpic = "image/player-right.png"
 
         self.player.pos = (currentx,currenty)
         self.player.source = currentpic
