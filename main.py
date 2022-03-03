@@ -28,7 +28,7 @@ class Charactor(Widget):
 
         self.keysPressed = set()
 
-        Clock.schedule_interval(self.move_step,0)
+        Clock.schedule_interval(self.move_step,1/30)
 
     def _on_keyboard_closed(self):
         self._keyboard.unbind(on_key_down=self._on_key_down)
