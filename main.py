@@ -16,10 +16,13 @@ class Charactor(Widget):
         self._keyboard = Window.request_keyboard(self._on_keyboard_closed,self)
         self._keyboard.bind(on_key_down=self._on_key_down)
         self._keyboard.bind(on_key_up=self._on_key_up)
-
+        
+        # Sound
         self.sound = SoundLoader.load('audio/sound.mp3')
         self.sound.play()
 
+        #Charactor animate State
+        self.playerState = 0 
         with self.canvas:
             self.player = Rectangle(source="image/playerfr1.png",pos=(700,500),size=(240,200))
 
@@ -93,7 +96,7 @@ class GameMain(Widget):
 
 
 class MyApp(App):
-    def build(self):
+    def build(self): #backGround
         Window.clearcolor = (1,1,1,1)
         # sound = SoundLoader.load('audio/sound.mp3')
         # if sound:
