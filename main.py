@@ -17,9 +17,11 @@ class Charactor(Widget):
         self._keyboard.bind(on_key_down=self._on_key_down)
         self._keyboard.bind(on_key_up=self._on_key_up)
         
-        # Sound
+        #Sound
         self.sound = SoundLoader.load('audio/sound.mp3')
+        self.sound.loop = True
         self.sound.play()
+        # Clock.schedule_interval(self.check_sound, 1)
 
         #Charactor animate State
         self.playerState = 0 
@@ -27,7 +29,6 @@ class Charactor(Widget):
             self.player = Rectangle(source="image/playerfr1.png",pos=(700,500),size=(240,200))
 
         self.keysPressed = set()
-
         Clock.schedule_interval(self.move_step,1/30)
 
     def _on_keyboard_closed(self):
@@ -85,7 +86,12 @@ class Charactor(Widget):
 
         self.player.pos = (currentx,currenty)
         self.player.source = currentpic
+    
+    # Sound
+    # def check_sound(self, dt = None):
+    #     self.sound.play()
 
+    
 class GameMain(Widget):
     player = ObjectProperty(None)
     def __init__(self, **kwargs):
