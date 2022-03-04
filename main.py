@@ -26,7 +26,7 @@ class GameMain(Widget):
         self._score_label.refresh()
         self._score = 0
 
-        self.item_type = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H','I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z','Bomb','Eraser']
+        self.item_type = [ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z','Bomb','Eraser']
         self._get_items = ""
 
         self._df = pd.read_csv('words.csv')
@@ -63,23 +63,31 @@ class GameMain(Widget):
         self.sound.play()
 
         Clock.schedule_interval(self.spawn_items, 3)
-        Clock.schedule_interval(self.spawn_answer, 1)
+        Clock.schedule_interval(self.spawn_answer, 4)
 
     def spawn_items(self, dt):
         # print(Window.width)
         random_item_type = random.choice(self.item_type)
         random_x = random.randint(0, Window.width)
         y = Window.height - 80
-        random_speed = random.randint(50, 200)
+        random_speed = random.randint(30, 100)
         self.add_entity(Items((random_x, y), random_speed, random_item_type))
     
     def spawn_answer(self, dt):
         # print(Window.width)
-        random_item_type = random.choice(list(self.word_rand.upper()))
+        get_str = list(self._get_items)
+        flag = 0
+        for i in range(len(get_str)):
+            if self.word_rand[i].upper() == get_str[i]:
+                flag += 1
+            else:
+                flag = 0
+        help_char = self.word_rand[flag].upper()
+        # random_item_type = random.choice(help_list)
         random_x = random.randint(0, Window.width)
         y = Window.height - 80
-        random_speed = random.randint(50, 200)
-        self.add_entity(Items((random_x, y), random_speed, random_item_type))
+        random_speed = random.randint(30, 100)
+        self.add_entity(Items((random_x, y), random_speed, help_char))
     
     def collides(self, e1, e2):
         r1x = e1.pos[0]
@@ -156,6 +164,12 @@ class GameMain(Widget):
             self._word_instruction.pos = ((Window.width/2) - (self._word_label.texture.size[0]/2), Window.height - 70)
 
         elif self.get_items == self.word_rand.upper():
+            self._score += len(self.word_rand)
+            self._score_label.text = F"Score : {self._score}"
+            self._score_label.refresh()
+            self._score_instruction.texture = self._score_label.texture
+            self._score_instruction.size = self._score_label.texture.size
+
             rand_word = random.randint(1,len(self._df['Word']))
             self.word_rand = self._df.iloc[rand_word]['Word']
             self.def_word = self._df.iloc[rand_word]['Definition'] 
@@ -170,12 +184,27 @@ class GameMain(Widget):
             self._definition_instruction.texture = self._def_label.texture
             self._definition_instruction.size = self._def_label.texture.size
             self._definition_instruction.pos = ((Window.width/2) - (self._def_label.texture.size[0]/2), Window.height - 90)
+            self.clear_items()
+            print(self.word_rand)
         else:
             self._word_label.text = "_ "*len(self.word_rand)
             self._word_label.refresh()
             self._word_instruction.texture = self._word_label.texture
+
+            self._score -= int(len(self.word_rand)/2)
+            self._score_label.text = F"Score : {self._score}"
+            self._score_label.refresh()
+            self._score_instruction.texture = self._score_label.texture
+            self._score_instruction.size = self._score_label.texture.size
             self.clear_items()
         # self._word_instruction.pos = (self._word_instruction.pos, Window.height - 70)
+        
+    def half_score(self):
+        self._score = int( self._score/2)
+        self._score_label.text = F"Score : {self._score}"
+        self._score_label.refresh()
+        self._score_instruction.texture = self._score_label.texture
+        self._score_instruction.size = self._score_label.texture.size
         
 
 
@@ -293,6 +322,7 @@ class Items(Entity):
                 game.remove_entity(self)
                 print(F"collide! {self.item_type}")
                 if self.item_type == "Bomb":
+                    game.half_score()
                     print("BOMB")
                     is_alpha = False
                 elif self.item_type == "Eraser":
