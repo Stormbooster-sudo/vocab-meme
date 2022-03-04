@@ -26,13 +26,14 @@ class GameMain(Widget):
         self._score_label.refresh()
         self._score = 0
 
-        self.item_type = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H','I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z','BOMB','CLEAR']
+        self.item_type = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H','I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z','Bomb','Eraser']
         self._get_items = ""
 
-        df = pd.read_csv('words.csv')
-        rand_word = random.randint(1,len(df['Word']))
-        self.word_rand = df.iloc[rand_word]['Word']
-        self.def_word = df.iloc[rand_word]['Definition'] 
+        self._df = pd.read_csv('words.csv')
+        rand_word = random.randint(1,len(self._df['Word']))
+        self.word_rand = self._df.iloc[rand_word]['Word']
+        self.def_word = self._df.iloc[rand_word]['Definition'] 
+        print(self.word_rand)
 
         self._word_label = CoreLabel(text="_ "*len(self.word_rand), font_size=60)
         self._word_label.refresh()
@@ -61,11 +62,20 @@ class GameMain(Widget):
         self.sound.loop = True
         self.sound.play()
 
-        Clock.schedule_interval(self.spawn_items, 2)
+        Clock.schedule_interval(self.spawn_items, 3)
+        Clock.schedule_interval(self.spawn_answer, 1)
 
     def spawn_items(self, dt):
         # print(Window.width)
         random_item_type = random.choice(self.item_type)
+        random_x = random.randint(0, Window.width)
+        y = Window.height - 80
+        random_speed = random.randint(50, 200)
+        self.add_entity(Items((random_x, y), random_speed, random_item_type))
+    
+    def spawn_answer(self, dt):
+        # print(Window.width)
+        random_item_type = random.choice(list(self.word_rand.upper()))
         random_x = random.randint(0, Window.width)
         y = Window.height - 80
         random_speed = random.randint(50, 200)
@@ -144,6 +154,22 @@ class GameMain(Widget):
             if not is_alpha:
                 self._word_instruction.pos = (Window.width - 450, Window.height - 70)
             self._word_instruction.pos = ((Window.width/2) - (self._word_label.texture.size[0]/2), Window.height - 70)
+
+        elif self.get_items == self.word_rand.upper():
+            rand_word = random.randint(1,len(self._df['Word']))
+            self.word_rand = self._df.iloc[rand_word]['Word']
+            self.def_word = self._df.iloc[rand_word]['Definition'] 
+            self._word_label.text = "_ "*len(self.word_rand)
+            self._word_label.refresh()
+            self._word_instruction.texture = self._word_label.texture
+            self._word_instruction.size = self._word_label.texture.size
+            self._word_instruction.pos = ((Window.width/2) - (self._word_label.texture.size[0]/2), Window.height - 70)
+
+            self._def_label.text = self.def_word
+            self._def_label.refresh()
+            self._definition_instruction.texture = self._def_label.texture
+            self._definition_instruction.size = self._def_label.texture.size
+            self._definition_instruction.pos = ((Window.width/2) - (self._def_label.texture.size[0]/2), Window.height - 90)
         else:
             self._word_label.text = "_ "*len(self.word_rand)
             self._word_label.refresh()
@@ -254,7 +280,7 @@ class Items(Entity):
         self.item_type = item_type
         self.size = (50, 50)
         self.pos = pos
-        self.source = "image/A_test.png"
+        self.source = F"image/asset/{item_type}.jpg"
         game.bind(on_frame=self.move_step)
 
     def stop_callbacks(self):
@@ -266,10 +292,10 @@ class Items(Entity):
                 self.stop_callbacks()
                 game.remove_entity(self)
                 print(F"collide! {self.item_type}")
-                if self.item_type == "BOMB":
+                if self.item_type == "Bomb":
                     print("BOMB")
                     is_alpha = False
-                elif self.item_type == "CLEAR":
+                elif self.item_type == "Eraser":
                     game.clear_items()
                     is_alpha = False
                 else:
