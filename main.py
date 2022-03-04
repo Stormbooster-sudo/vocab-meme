@@ -12,6 +12,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import CoreLabel
 import random
 
+
 class GameMain(Widget):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -21,7 +22,7 @@ class GameMain(Widget):
         self._keyboard.bind(on_key_down=self._on_key_down)
         self._keyboard.bind(on_key_up=self._on_key_up)
 
-        self._score_label = CoreLabel(text="Score: 0",font_size=20)
+        self._score_label = CoreLabel(text="Score: 0", font_size=20)
         self._score_label.refresh()
         self._score = 0
 
@@ -36,32 +37,41 @@ class GameMain(Widget):
         self.keysPressed = set()
         self._entities = set()
 
-        Clock.schedule_interval(self.on_frame, 0)
+        Clock.schedule_interval(self._on_frame, 1/40)
 
-        #Sound
+        # Sound
         self.sound = SoundLoader.load('audio/sound.mp3')
         self.sound.loop = True
         self.sound.play()
 
-        
-    #Spawn_enemies 
-    
+        Clock.schedule_interval(self.spawn_items, 2)
+
+    def spawn_items(self, dt):
+        # print(Window.width)
+        random_x = random.randint(0, Window.width)
+        y = Window.height - 80
+        random_speed = random.randint(50, 200)
+        self.add_entity(Items((random_x, y), random_speed))
+
+    def _on_frame(self, dt):
+        self.dispatch("on_frame", dt)
+
     def on_frame(self, dt):
         pass
-        
+
     def _on_keyboard_closed(self):
         self._keyboard.unbind(on_key_down=self._on_key_down)
         self._keyboard.unbind(on_key_up=self._on_key_up)
         self._keyboard = None
-    
-    def _on_key_down(self,keyboard,keycode,text,modifiers):
+
+    def _on_key_down(self, keyboard, keycode, text, modifiers):
         self.keysPressed.add(text)
 
-    def _on_key_up(self,keyboard,keycode):
+    def _on_key_up(self, keyboard, keycode):
         text = keycode[1]
         if text in self.keysPressed:
             self.keysPressed.remove(text)
-    
+
     def add_entity(self, entity):
         self._entities.add(entity)
         self.canvas.add(entity._instruction)
@@ -70,7 +80,7 @@ class GameMain(Widget):
 class Entity(object):
     def __init__(self):
         self._pos = (0, 0)
-        self._size = (250, 200)
+        self._size = (0, 0)
         self._source = "image/playerfr1.png"
         self._instruction = Rectangle(
             pos=self._pos, size=self._size, source=self._source)
@@ -102,25 +112,27 @@ class Entity(object):
         self._source = value
         self._instruction.source = self._source
 
+
 class Player(Entity):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.playerState = 0 
+        self.playerState = 0
+        self.size = (270,220)
         self.source = "image/player.png"
         game.bind(on_frame=self.move_step)
         self.pos = (400, 0)
 
-        self.keysPressed = set()
-        Clock.schedule_interval(self.move_step,1/30)
 
-    
+    def stop_callbacks(self):
+        game.unbind(on_frame=self.move_step)
+
     # Move
-    def move_step(self,dt):
+    def move_step(self, sender, dt):
         currentpic = self.source
         currentx = self.pos[0]
         currenty = self.pos[1]
 
-        step_size = 500 * dt
+        step_size = 500 * (dt)
 
         if "w" in game.keysPressed:
             if self.playerState < 7:
@@ -155,11 +167,27 @@ class Player(Entity):
                 currentpic = F"image/playerfr{self.playerState + 1}.png"
             currentx += step_size
 
-        self.pos = (currentx,currenty)
+        self.pos = (currentx, currenty)
         self.source = currentpic
 
-    
 
+class Items(Entity):
+    def __init__(self, pos, speed=100):
+        super().__init__()
+        self._speed = speed
+        self.size = (50, 50)
+        self.pos = pos
+        self.source = "image/A_test.png"
+        game.bind(on_frame=self.move_step)
+
+    def stop_callbacks(self):
+        game.unbind(on_frame=self.move_step)
+
+    def move_step(self, sender, dt):
+        step_size = self._speed * dt
+        new_x = self.pos[0]
+        new_y = self.pos[1] - step_size
+        self.pos = (new_x, new_y)
 
 
 game = GameMain()
@@ -171,11 +199,8 @@ game.add_entity(game.player)
 # game.add_entity(enemy)
 
 
-
-
-
 class MyApp(App):
-    def build(self): #backGround
+    def build(self):
         return game
 
 
