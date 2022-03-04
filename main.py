@@ -52,7 +52,29 @@ class GameMain(Widget):
         y = Window.height - 80
         random_speed = random.randint(50, 200)
         self.add_entity(Items((random_x, y), random_speed))
+    
+    def collides(self, e1, e2):
+        r1x = e1.pos[0]
+        r1y = e1.pos[1]
+        r2x = e2.pos[0]
+        r2y = e2.pos[1]
+        r1w = e1.size[0]
+        r1h = e1.size[1]
+        r2w = e2.size[0]
+        r2h = e2.size[1]
 
+        if (r1x < r2x + r2w and r1x + r1w > r2x and r1y < r2y + r2h and r1y + r1h > r2y):
+            return True
+        else:
+            return False
+
+    def colliding_entities(self, entity):
+        result = set()
+        for e in self._entities:
+            if self.collides(e, entity) and e != entity:
+                result.add(e)
+        return result
+    
     def _on_frame(self, dt):
         self.dispatch("on_frame", dt)
 
@@ -75,6 +97,11 @@ class GameMain(Widget):
     def add_entity(self, entity):
         self._entities.add(entity)
         self.canvas.add(entity._instruction)
+    
+    def remove_entity(self, entity):
+        if entity in self._entities:
+            self._entities.remove(entity)
+            self.canvas.remove(entity._instruction)
 
 
 class Entity(object):
@@ -118,7 +145,7 @@ class Player(Entity):
         super().__init__(**kwargs)
         self.playerState = 0
         self.size = (270,220)
-        self.source = "image/player.png"
+        # self.source = "image/player.png"
         game.bind(on_frame=self.move_step)
         self.pos = (400, 0)
 
@@ -172,7 +199,7 @@ class Player(Entity):
 
 
 class Items(Entity):
-    def __init__(self, pos, speed=100):
+    def __init__(self, pos, speed):
         super().__init__()
         self._speed = speed
         self.size = (50, 50)
@@ -184,6 +211,12 @@ class Items(Entity):
         game.unbind(on_frame=self.move_step)
 
     def move_step(self, sender, dt):
+        for e in game.colliding_entities(self):
+            if e == game.player:
+                self.stop_callbacks()
+                game.remove_entity(self)
+                print("collide!")
+                return
         step_size = self._speed * dt
         new_x = self.pos[0]
         new_y = self.pos[1] - step_size
