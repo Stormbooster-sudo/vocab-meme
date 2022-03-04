@@ -29,6 +29,9 @@ class GameMain(Widget):
         self.item_type = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H','I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z','BOMB','CLEAR']
         self._get_items = ""
 
+        self._word_label = CoreLabel(text="TEXT", font_size=60)
+        self._word_label.refresh()
+
         self.register_event_type("on_frame")
 
         with self.canvas:
@@ -36,6 +39,8 @@ class GameMain(Widget):
                       size=(Window.width, Window.height))
             self._score_instruction = Rectangle(texture=self._score_label.texture, pos=(
                 0, Window.height - 50), size=self._score_label.texture.size)
+            self._word_instruction = Rectangle(texture=self._word_label.texture, pos=(
+                Window.width - 450, Window.height - 70), size=self._word_label.texture.size)
 
         self.keysPressed = set()
         self._entities = set()
@@ -106,7 +111,8 @@ class GameMain(Widget):
         if entity in self._entities:
             self._entities.remove(entity)
             self.canvas.remove(entity._instruction)
-        
+    
+    #Word Display
     @property
     def get_items(self):
         return self._get_items
@@ -116,7 +122,18 @@ class GameMain(Widget):
     
     def clear_items(self):
         self._get_items = ""
-
+    
+    def refresh_word(self,is_alpha):
+        self._word_label.text = self._get_items
+        self._word_label.refresh()
+        self._word_instruction.texture = self._word_label.texture
+        self._word_instruction.size = self._word_label.texture.size
+        print(self._word_instruction.pos[0])
+        print(is_alpha)
+        if not is_alpha:
+            self._word_instruction.pos = (Window.width - 450, Window.height - 70)
+        self._word_instruction.pos = (self._word_instruction.pos[0] - 12, Window.height - 70)
+        
 
 
 class Entity(object):
@@ -234,10 +251,14 @@ class Items(Entity):
                 print(F"collide! {self.item_type}")
                 if self.item_type == "BOMB":
                     print("BOMB")
+                    is_alpha = False
                 elif self.item_type == "CLEAR":
                     game.clear_items()
+                    is_alpha = False
                 else:
                     game.add_items(self.item_type)
+                    is_alpha = True
+                game.refresh_word(is_alpha)
                 print(game.get_items)
                 return
         step_size = self._speed * dt
