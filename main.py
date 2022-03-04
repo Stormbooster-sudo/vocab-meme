@@ -29,10 +29,15 @@ class GameMain(Widget):
         self.item_type = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H','I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z','BOMB','CLEAR']
         self._get_items = ""
 
-        self._word_label = CoreLabel(text="TEXT", font_size=60)
-        self._word_label.refresh()
-
         df = pd.read_csv('words.csv')
+        rand_word = random.randint(1,len(df['Word']))
+        self.word_rand = df.iloc[rand_word]['Word']
+        self.def_word = df.iloc[rand_word]['Definition'] 
+
+        self._word_label = CoreLabel(text="_ "*len(self.word_rand), font_size=60)
+        self._word_label.refresh()
+        self._def_label = CoreLabel(text=self.def_word.upper(), font_size=20)
+        self._def_label.refresh()
 
         self.register_event_type("on_frame")
 
@@ -42,7 +47,9 @@ class GameMain(Widget):
             self._score_instruction = Rectangle(texture=self._score_label.texture, pos=(
                 0, Window.height - 50), size=self._score_label.texture.size)
             self._word_instruction = Rectangle(texture=self._word_label.texture, pos=(
-                Window.width - 450, Window.height - 70), size=self._word_label.texture.size)
+                (Window.width/2) - (self._word_label.texture.size[0]/2), Window.height - 70), size=self._word_label.texture.size)
+            self._definition_instruction = Rectangle(texture=self._def_label.texture, pos=(
+                (Window.width/2) - (self._def_label.texture.size[0]/2), Window.height - 90), size=self._def_label.texture.size)
 
         self.keysPressed = set()
         self._entities = set()
@@ -126,15 +133,23 @@ class GameMain(Widget):
         self._get_items = ""
     
     def refresh_word(self,is_alpha):
-        self._word_label.text = self._get_items
-        self._word_label.refresh()
-        self._word_instruction.texture = self._word_label.texture
-        self._word_instruction.size = self._word_label.texture.size
-        print(self._word_instruction.pos[0])
-        print(is_alpha)
-        if not is_alpha:
-            self._word_instruction.pos = (Window.width - 450, Window.height - 70)
-        self._word_instruction.pos = (self._word_instruction.pos[0] - 12, Window.height - 70)
+        if len(self.get_items) < len(self.word_rand):
+            self._word_label.text = self._get_items + " _ "*(len(self.word_rand) - len(self.get_items))
+            self._word_label.refresh()
+            self._word_instruction.texture = self._word_label.texture
+            self._word_instruction.size = self._word_label.texture.size
+            print(self._word_label.texture.size)
+            print(self._word_instruction.pos[0])
+            # print(is_alpha)
+            if not is_alpha:
+                self._word_instruction.pos = (Window.width - 450, Window.height - 70)
+            self._word_instruction.pos = ((Window.width/2) - (self._word_label.texture.size[0]/2), Window.height - 70)
+        else:
+            self._word_label.text = "_ "*len(self.word_rand)
+            self._word_label.refresh()
+            self._word_instruction.texture = self._word_label.texture
+            self.clear_items()
+        # self._word_instruction.pos = (self._word_instruction.pos, Window.height - 70)
         
 
 
