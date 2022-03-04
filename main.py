@@ -11,7 +11,7 @@ from kivy.core.audio import SoundLoader
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import CoreLabel
 import random
-
+import pandas as pd
 
 class GameMain(Widget):
     def __init__(self, **kwargs):
@@ -31,6 +31,8 @@ class GameMain(Widget):
 
         self._word_label = CoreLabel(text="TEXT", font_size=60)
         self._word_label.refresh()
+
+        df = pd.read_csv('words.csv')
 
         self.register_event_type("on_frame")
 
