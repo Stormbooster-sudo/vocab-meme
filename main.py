@@ -1,3 +1,4 @@
+from tkinter import Button
 from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.graphics import Rectangle
@@ -9,9 +10,16 @@ from kivy.properties import (
 from kivy.core.window import Window
 from kivy.core.audio import SoundLoader
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.floatlayout import FloatLayout
+from kivy.lang import Builder
 from kivy.uix.label import CoreLabel
+from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.config import Config
+
 import random
 import pandas as pd
+
+Config.set('graphics', 'maxfps', '60')
 
 class GameMain(Widget):
     def __init__(self, **kwargs):
@@ -43,6 +51,7 @@ class GameMain(Widget):
         self.register_event_type("on_frame")
 
         with self.canvas:
+            print("Create canvas")
             Rectangle(source="image/background.png", pos=(0, 0),
                       size=(Window.width, Window.height))
             self._score_instruction = Rectangle(texture=self._score_label.texture, pos=(
@@ -66,16 +75,17 @@ class GameMain(Widget):
         Clock.schedule_interval(self.spawn_answer, 4)
 
     def spawn_items(self, dt):
-        # print(Window.width)
+        print(Window.width)
+
         random_item_type = random.choice(self.item_type)
         random_x = random.randint(0, Window.width)
         y = Window.height - 80
         random_speed = random.randint(30, 100)
-        self.add_entity(Items((random_x, y), random_speed, random_item_type))
+        self.add_entity(Items((random_x, y), random_speed, random_item_type,self))
     
     def spawn_answer(self, dt):
         # print(Window.width)
-        get_str = list(self._get_items)
+        get_str = list(self.get_items)
         flag = 0
         for i in range(len(get_str)):
             if self.word_rand[i].upper() == get_str[i]:
@@ -87,7 +97,7 @@ class GameMain(Widget):
         random_x = random.randint(0, Window.width)
         y = Window.height - 80
         random_speed = random.randint(30, 100)
-        self.add_entity(Items((random_x, y), random_speed, help_char))
+        self.add_entity(Items((random_x, y), random_speed, help_char,self))
     
     def collides(self, e1, e2):
         r1x = e1.pos[0]
@@ -138,6 +148,7 @@ class GameMain(Widget):
         if entity in self._entities:
             self._entities.remove(entity)
             self.canvas.remove(entity._instruction)
+
     
     #Word Display
     @property
@@ -245,17 +256,18 @@ class Entity(object):
 
 
 class Player(Entity):
-    def __init__(self, **kwargs):
+    def __init__(self,game, **kwargs):
         super().__init__(**kwargs)
+        self.game = game
         self.playerState = 0
         self.size = (150,160)
         # self.source = "image/player.png"
-        game.bind(on_frame=self.move_step)
+        self.game.bind(on_frame=self.move_step)
         self.pos = (400, 0)
 
 
     def stop_callbacks(self):
-        game.unbind(on_frame=self.move_step)
+        self.game.unbind(on_frame=self.move_step)
 
     # Move
     def move_step(self, sender, dt):
@@ -265,33 +277,37 @@ class Player(Entity):
 
         step_size = 500 * (dt)
 
-        if "w" in game.keysPressed:
+        if "w" in self.game.keysPressed:
             if self.playerState < 7:
                 currentpic = F"image/playerfr{self.playerState + 1}.png"
+                print("w")
                 self.playerState += 1
             else:
                 self.playerState = 0
                 currentpic = F"image/playerfr{self.playerState + 1}.png"
             currenty += step_size
-        if "s" in game.keysPressed:
+        if "s" in self.game.keysPressed:
             if self.playerState < 7:
                 currentpic = F"image/playerfr{self.playerState + 1}.png"
+                print("s")
                 self.playerState += 1
             else:
                 self.playerState = 0
                 currentpic = F"image/playerfr{self.playerState + 1}.png"
             currenty -= step_size
-        if "a" in game.keysPressed:
+        if "a" in self.game.keysPressed:
             if self.playerState < 7:
                 currentpic = F"image/playerfr{self.playerState + 1}.png"
+                print("a")
                 self.playerState += 1
             else:
                 self.playerState = 0
                 currentpic = F"image/playerfr{self.playerState + 1}.png"
             currentx -= step_size
-        if "d" in game.keysPressed:
+        if "d" in self.game.keysPressed:
             if self.playerState < 7:
                 currentpic = F"image/playerfr{self.playerState + 1}.png"
+                print("d")
                 self.playerState += 1
             else:
                 self.playerState = 0
@@ -303,57 +319,128 @@ class Player(Entity):
 
 
 class Items(Entity):
-    def __init__(self, pos, speed, item_type):
+    def __init__(self, pos, speed, item_type, game):
         super().__init__()
+        self.game = game
         self._speed = speed
         self.item_type = item_type
         self.size = (50, 50)
         self.pos = pos
         self.source = F"image/asset/{item_type}.jpg"
-        game.bind(on_frame=self.move_step)
+        self.game.bind(on_frame=self.move_step)
 
     def stop_callbacks(self):
-        game.unbind(on_frame=self.move_step)
+        self.game.unbind(on_frame=self.move_step)
 
     def move_step(self, sender, dt):
-        for e in game.colliding_entities(self):
-            if e == game.player:
+        for e in self.game.colliding_entities(self):
+            if e == self.game.player:
                 self.stop_callbacks()
-                game.remove_entity(self)
+                self.game.remove_entity(self)
                 print(F"collide! {self.item_type}")
                 if self.item_type == "Bomb":
-                    game.half_score()
+                    self.game.half_score()
                     print("BOMB")
                     is_alpha = False
                 elif self.item_type == "Eraser":
-                    game.clear_items()
+                    self.game.clear_items()
                     is_alpha = False
                 else:
-                    game.add_items(self.item_type)
+                    self.game.add_items(self.item_type)
                     is_alpha = True
-                game.refresh_word(is_alpha)
-                print(game.get_items)
+                self.game.refresh_word(is_alpha)
+                print(self.game.get_items)
                 return
         step_size = self._speed * dt
         new_x = self.pos[0]
         new_y = self.pos[1] - step_size
-        self.pos = (new_x, new_y)
+        self.pos = (new_x, new_y)                                                                                                   
+                                                                                                   
+                                                                                                                                                                                                    
 
-
-game = GameMain()
-game.player = Player()
-game.player.pos = (Window.width - Window.width/3, 0)
-game.add_entity(game.player)
 
 # enemy = Items((500,500))
 # game.add_entity(enemy)
+class GameScreen():
+    def initial(self):
+        self.game = GameMain()
+        self.game.player = Player(self.game)
+        self.game.player.pos = (Window.width - Window.width/3, 0)
+        self.game.add_entity(self.game.player)
+        return self.game
+
+    
 
 
+# class MenuScreen(Screen):
+#     pass
+
+# class SM(ScreenManager):
+#     pass
+
+# kv = Builder.load_file('style.kv')
 class MyApp(App):
     def build(self):
-        return game
+        g = GameScreen()
+        return g.initial()
 
-
+   
 if __name__ == "__main__":
-    app = MyApp()
-    app.run()
+    MyApp().run()
+
+
+# chadarat
+
+# chadarat
+
+# chadarat
+
+# chadarat
+
+# chadarat
+
+# chadarat
+
+# chadarat
+
+# chadarat
+
+# chadarat
+
+# chadarat
+
+# chadarat
+
+# chadarat
+
+# chadarat
+
+# chadarat
+
+# chadarat
+
+# chadarat
+
+# chadarat
+
+# chadarat
+
+# chadarat
+
+# chadarat
+
+# chadarat
+
+# chadarat
+
+# chadarat
+
+# chadarat
+
+# chadarat
+
+# chadarat
+
+# chadarat
+
+# chadarat

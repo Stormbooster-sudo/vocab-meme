@@ -1,12 +1,34 @@
-<GameMain>:
-    player : player_charactor
-    size: 250,250
-    canvas.before:
-        Color:
-            rgba: 1, 1, 1, 1
-        Rectangle:
-            pos: self.pos
-            size: self.size
-    Charactor:
-        id: player_charactor
-        center: self.parent.center
+SM:
+    MenuScreen:
+    GameScreen:
+<MenuScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        Button:
+            text: 'Start Game'
+            on_press:
+                root.manager.current = 'start_game'
+                root.manager.transition.direction = 'right'
+        Button:
+            text: 'Quit'
+            on_press: app.stop() 
+<GameScreen>:
+    name: 'start_game'
+    on_enter: self.initial()
+    BoxLayout:
+        orientation: 'vertical'
+        TextInput:
+            id: names
+            text: "Enter Name"
+        BoxLayout:
+            Button:
+                text: 'Random Name'
+                on_press: root.random()
+            Label:
+                id: display_name
+                text: 'No name random'
+        Button:
+            text: 'Menu'
+            on_press: 
+                root.manager.current = 'menu'
+                root.manager.transition.direction = 'right'
