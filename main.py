@@ -121,7 +121,7 @@ class GameMain(Screen):
         random_speed = random.randint(30, 100)
         self.add_entity(Items((random_x, y), random_speed, help_char,self))
     
-    #
+    # ตรวจจับการชนของ item with ตัวละคร
     def collides(self, e1, e2):
         r1x = e1.pos[0]
         r1y = e1.pos[1]
@@ -136,7 +136,7 @@ class GameMain(Screen):
             return True
         else:
             return False
-
+    
     def colliding_entities(self, entity):
         result = set()
         for e in self._entities:
@@ -177,13 +177,14 @@ class GameMain(Screen):
     @property
     def get_items(self):
         return self._get_items
-
+    # เพิ่มตัวอักษรหลังเก็บ
     def add_items(self, value):
         self._get_items += value
-    
+    # Eraser
     def clear_items(self):
         self._get_items = ""
-    
+
+    # spawn item again
     def refresh_word(self,is_alpha):
         if len(self.get_items) < len(self.word_rand):
             self._word_label.text = self._get_items + " _ "*(len(self.word_rand) - len(self.get_items))
@@ -258,16 +259,21 @@ class GameMain(Screen):
         if self._isPause:
             self._isPause = not self._isPause
             self.freeze_game()
-            self.resume_btn= Button(size_hint = (None, None),size=(200,70),pos=(Window.width/2, Window.height/2),text="resume")
+            self.resume_btn= Button(size_hint = (None, None),size=(200,70),pos=(Window.width/2 - 100, Window.height/2),text="Resume")
             self.resume_btn.bind(on_press=self.pause)
             self.add_widget(self.resume_btn)
-            
+
+            self.to_level_scn_btn = Button(size_hint = (None, None),size=(200,70),pos=(Window.width/2 - 100, Window.height/2 - 80),text="Back To Level")
+            self.to_level_scn_btn.bind(on_press=self.change_to_level_screen)
+            self.add_widget(self.to_level_scn_btn)
         else:
             self.start_game_render()
             self.remove_widget(self.resume_btn)
             self._isPause = not self._isPause
                                                                                                    
-                                                                                                   
+    def change_to_level_screen(self, value):
+        self.manager.current = "game_level" 
+        self.manager.transition.direction = 'right'                                                                                   
 
 class GameLevelMenuScreen(Screen):
     def pressBtn(self, level):
