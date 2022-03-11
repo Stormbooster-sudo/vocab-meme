@@ -253,18 +253,22 @@ class GameMain(Screen):
         Clock.unschedule(self.spawn_items)
         Clock.unschedule(self.spawn_answer)
     
-    # Button pause
+    # pause button 
     def pause(self, value):
         if self._isPause:
             self._isPause = not self._isPause
             self.freeze_game()
+            self.resume_btn= Button(size_hint = (None, None),size=(200,70),pos=(Window.width/2, Window.height/2),text="resume")
+            self.resume_btn.bind(on_press=self.pause)
+            self.add_widget(self.resume_btn)
             
         else:
             self.start_game_render()
+            self.remove_widget(self.resume_btn)
             self._isPause = not self._isPause
                                                                                                    
                                                                                                    
-        
+
 class GameLevelMenuScreen(Screen):
     def pressBtn(self, level):
         # print(level)
