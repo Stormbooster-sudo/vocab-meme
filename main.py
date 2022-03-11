@@ -8,6 +8,7 @@ from kivy.lang import Builder
 from kivy.uix.label import CoreLabel
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.config import Config
+from kivy.uix.button import Button
 
 import random
 import pandas as pd
@@ -18,18 +19,22 @@ Config.set('graphics', 'maxfps', '60')
 
 
 class GameMain(Screen):
+    # set ค่าเริ่มต้น
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._score_label = CoreLabel(text="Score: 0", font_size=20)
         self._score_label.refresh()
         self._score = 0
 
+        # เก็บ key 
         self.item_type = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
             'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'Bomb', 'Eraser']
         self._get_items = ""
-
+        
+        # รีเฟรชหน้าเกม
         self.register_event_type("on_frame")
 
+        # ปุ่มกด 
         self.keysPressed = set()
         self._entities = set()
 
@@ -43,6 +48,7 @@ class GameMain(Screen):
     def test(self,level):
         print(level)
 
+    # ค่าเริ่มต้นของโปรแกรม 
     def initial(self):
         self._keyboard = Window.request_keyboard(
             self._on_keyboard_closed, self)
@@ -83,15 +89,19 @@ class GameMain(Screen):
         self.player.pos = (Window.width - Window.width/3, 0)
         self.add_entity(self.player)
 
+        self.pause_button = Button(size_hint = (None, None), size=(50,50), pos=(Window.width - 50, Window.height - 50),text="| |")
+        self.add_widget(self.pause_button)
+
+    # summon all item from random. 
     def spawn_items(self, dt):
         print(Window.width)
-
-        random_item_type = random.choice(self.item_type)
-        random_x = random.randint(0, Window.width)
-        y = Window.height - 80
-        random_speed = random.randint(30, 100)
-        self.add_entity(Items((random_x, y), random_speed, random_item_type,self))
+        random_item_type = random.choice(self.item_type) # สุ่มค่าจาก self.item_type
+        random_x = random.randint(0, Window.width) 
+        y = Window.height - 80 # เก็บค่าความสูงความยาวหน้าต่างโปรแกรม 
+        random_speed = random.randint(30, 100) # Item's speed drop.
+        self.add_entity(Items((random_x, y), random_speed, random_item_type,self)) 
     
+    # เฉลยคำตอบ
     def spawn_answer(self, dt):
         # print(Window.width)
         get_str = list(self.get_items)
@@ -108,6 +118,7 @@ class GameMain(Screen):
         random_speed = random.randint(30, 100)
         self.add_entity(Items((random_x, y), random_speed, help_char,self))
     
+    #
     def collides(self, e1, e2):
         r1x = e1.pos[0]
         r1y = e1.pos[1]
