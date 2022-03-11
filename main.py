@@ -21,34 +21,47 @@ import pandas as pd
 
 Config.set('graphics', 'maxfps', '60')
 
-class GameMain(Widget):
+
+class GameMain(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self._score_label = CoreLabel(text="Score: 0", font_size=20)
+        self._score_label.refresh()
+        self._score = 0
 
+        self.item_type = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+            'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'Bomb', 'Eraser']
+        self._get_items = ""
+
+        self.register_event_type("on_frame")
+
+        self.keysPressed = set()
+        self._entities = set()
+
+        Clock.schedule_interval(self._on_frame, 1/40)
+
+        # Sound
+        self.sound = SoundLoader.load('audio/sound.mp3')
+        self.sound.loop = True
+        self.sound.play()
+
+    def initial(self):
         self._keyboard = Window.request_keyboard(
             self._on_keyboard_closed, self)
         self._keyboard.bind(on_key_down=self._on_key_down)
         self._keyboard.bind(on_key_up=self._on_key_up)
 
-        self._score_label = CoreLabel(text="Score: 0", font_size=20)
-        self._score_label.refresh()
-        self._score = 0
-
-        self.item_type = [ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z','Bomb','Eraser']
-        self._get_items = ""
-
         self._df = pd.read_csv('words.csv')
-        rand_word = random.randint(1,len(self._df['Word']))
+        rand_word = random.randint(1, len(self._df['Word']))
         self.word_rand = self._df.iloc[rand_word]['Word']
-        self.def_word = self._df.iloc[rand_word]['Definition'] 
+        self.def_word = self._df.iloc[rand_word]['Definition']
         print(self.word_rand)
 
-        self._word_label = CoreLabel(text="_ "*len(self.word_rand), font_size=60)
+        self._word_label = CoreLabel(
+            text="_ "*len(self.word_rand), font_size=60)
         self._word_label.refresh()
         self._def_label = CoreLabel(text=self.def_word.upper(), font_size=20)
         self._def_label.refresh()
-
-        self.register_event_type("on_frame")
 
         with self.canvas:
             print("Create canvas")
@@ -61,18 +74,12 @@ class GameMain(Widget):
             self._definition_instruction = Rectangle(texture=self._def_label.texture, pos=(
                 (Window.width/2) - (self._def_label.texture.size[0]/2), Window.height - 90), size=self._def_label.texture.size)
 
-        self.keysPressed = set()
-        self._entities = set()
-
-        Clock.schedule_interval(self._on_frame, 1/40)
-
-        # Sound
-        self.sound = SoundLoader.load('audio/sound.mp3')
-        self.sound.loop = True
-        self.sound.play()
-
         Clock.schedule_interval(self.spawn_items, 3)
         Clock.schedule_interval(self.spawn_answer, 4)
+
+        self.player = Player(self)
+        self.player.pos = (Window.width - Window.width/3, 0)
+        self.add_entity(self.player)
 
     def spawn_items(self, dt):
         print(Window.width)
@@ -150,7 +157,7 @@ class GameMain(Widget):
             self.canvas.remove(entity._instruction)
 
     
-    #Word Display
+    # Word Display
     @property
     def get_items(self):
         return self._get_items
@@ -361,86 +368,20 @@ class Items(Entity):
 
 # enemy = Items((500,500))
 # game.add_entity(enemy)
-class GameScreen():
-    def initial(self):
-        self.game = GameMain()
-        self.game.player = Player(self.game)
-        self.game.player.pos = (Window.width - Window.width/3, 0)
-        self.game.add_entity(self.game.player)
-        return self.game
+class GameLevelMenuScreen(Screen):
+    pass
 
-    
+class MenuScreen(Screen):
+    pass
 
+class SM(ScreenManager):
+    pass
 
-# class MenuScreen(Screen):
-#     pass
-
-# class SM(ScreenManager):
-#     pass
-
-# kv = Builder.load_file('style.kv')
+kv = Builder.load_file('style.kv')
 class MyApp(App):
     def build(self):
-        g = GameScreen()
-        return g.initial()
+        return kv
 
    
 if __name__ == "__main__":
     MyApp().run()
-
-
-# chadarat
-
-# chadarat
-
-# chadarat
-
-# chadarat
-
-# chadarat
-
-# chadarat
-
-# chadarat
-
-# chadarat
-
-# chadarat
-
-# chadarat
-
-# chadarat
-
-# chadarat
-
-# chadarat
-
-# chadarat
-
-# chadarat
-
-# chadarat
-
-# chadarat
-
-# chadarat
-
-# chadarat
-
-# chadarat
-
-# chadarat
-
-# chadarat
-
-# chadarat
-
-# chadarat
-
-# chadarat
-
-# chadarat
-
-# chadarat
-
-# chadarat

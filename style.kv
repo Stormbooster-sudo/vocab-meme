@@ -1,6 +1,7 @@
 SM:
     MenuScreen:
-    GameScreen:
+    GameMain:
+    GameLevelMenuScreen:
 <MenuScreen>:
     BoxLayout:
         orientation: 'vertical'
@@ -12,23 +13,8 @@ SM:
         Button:
             text: 'Quit'
             on_press: app.stop() 
-<GameScreen>:
+<GameMain>:
     name: 'start_game'
     on_enter: self.initial()
-    BoxLayout:
-        orientation: 'vertical'
-        TextInput:
-            id: names
-            text: "Enter Name"
-        BoxLayout:
-            Button:
-                text: 'Random Name'
-                on_press: root.random()
-            Label:
-                id: display_name
-                text: 'No name random'
-        Button:
-            text: 'Menu'
-            on_press: 
-                root.manager.current = 'menu'
-                root.manager.transition.direction = 'right'
+
+
