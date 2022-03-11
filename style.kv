@@ -3,18 +3,66 @@ SM:
     GameMain:
     GameLevelMenuScreen:
 <MenuScreen>:
-    BoxLayout:
-        orientation: 'vertical'
+    name : "game_menu"
+    RelativeLayout:
+        # Image:
+        #     id: 'gif'
+        #     source: "fire.gif"
+        #     pos: 0,0
+        #     size:20,20
+        #     anim_loop: 1
+        #     allow_stretch: True
+        canvas.before:
+            Rectangle:
+                source: "image/background.png"
+                pos: 0,0
+                size: self.parent.size
         Button:
+            size_hint: None, None
+            center: self.parent.center
+            size: 200,50
             text: 'Start Game'
             on_press:
-                root.manager.current = 'start_game'
+                root.manager.current = 'game_level'
                 root.manager.transition.direction = 'right'
         Button:
+            size_hint: None, None
+            center: self.parent.center[0],self.parent.center[1] - 60
+            size: 200,50
             text: 'Quit'
             on_press: app.stop() 
 <GameMain>:
     name: 'start_game'
     on_enter: self.initial()
+
+<GameLevelMenuScreen>:
+    name: 'game_level'
+    BoxLayout:
+        orientation: 'vertical'
+        Button:
+            id: 'level_btn'
+            text: 'Hard'
+            on_press:
+                root.pressBtn("hard")
+                root.manager.current = 'start_game'
+                root.manager.transition.direction = 'right'
+        Button:
+            id: 'level_btn'
+            text: 'Difficult'
+            on_press:
+                root.manager.current = 'start_game'
+                root.manager.transition.direction = 'right'
+        Button:
+            id: 'level_btn'
+            text: 'Still Difficult ( but easier :) )'
+            on_press:
+                root.manager.current = 'start_game'
+                root.manager.transition.direction = 'right'
+        Button:
+            text: 'Back'
+            on_press:
+                root.manager.current = 'game_menu'
+                root.manager.transition.direction = 'left'
+
 
 
