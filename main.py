@@ -270,8 +270,10 @@ class GameMain(Screen):
             self.add_widget(self.to_level_scn_btn)
         else:
             self.start_game_render()
+            self.remove_widget(self.to_level_scn_btn)
             self.remove_widget(self.resume_btn)
             self._isPause = not self._isPause
+    
     # กลับไปหน้าเลือกระดับความยาก                                                                                                
     def change_to_level_screen(self, value):
         self.manager.current = "game_level" 
