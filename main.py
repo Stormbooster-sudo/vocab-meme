@@ -82,6 +82,8 @@ class GameMain(Screen):
             self._definition_instruction = Rectangle(texture=self._def_label.texture, pos=(
                 (Window.width/2) - (self._def_label.texture.size[0]/2), Window.height - 90), size=self._def_label.texture.size)
 
+        self._isPause = True
+
         Clock.schedule_interval(self.spawn_items, 3)
         Clock.schedule_interval(self.spawn_answer, 4)
 
@@ -90,6 +92,7 @@ class GameMain(Screen):
         self.add_entity(self.player)
 
         self.pause_button = Button(size_hint = (None, None), size=(50,50), pos=(Window.width - 50, Window.height - 50),text="| |")
+        self.pause_button.bind(on_press = self.pause)
         self.add_widget(self.pause_button)
 
     # summon all item from random. 
@@ -230,12 +233,35 @@ class GameMain(Screen):
             self.clear_items()
         # self._word_instruction.pos = (self._word_instruction.pos, Window.height - 70)
         
+    # Bomb's result    
     def half_score(self):
         self._score = int( self._score/2)
         self._score_label.text = F"Score : {self._score}"
         self._score_label.refresh()
         self._score_instruction.texture = self._score_label.texture
         self._score_instruction.size = self._score_label.texture.size
+
+    # เริ่มเกม
+    def start_game_render(self):
+        Clock.schedule_interval(self._on_frame, 1/40)
+        Clock.schedule_interval(self.spawn_items, 3)
+        Clock.schedule_interval(self.spawn_answer, 4)
+    
+    # After hold pause button
+    def freeze_game(self):
+        Clock.unschedule(self._on_frame)
+        Clock.unschedule(self.spawn_items)
+        Clock.unschedule(self.spawn_answer)
+    
+    # Button pause
+    def pause(self, value):
+        if self._isPause:
+            self._isPause = not self._isPause
+            self.freeze_game()
+            
+        else:
+            self.start_game_render()
+            self._isPause = not self._isPause
                                                                                                    
                                                                                                    
         
