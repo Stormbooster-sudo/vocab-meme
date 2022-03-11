@@ -56,10 +56,10 @@ class GameMain(Screen):
         self._keyboard.bind(on_key_up=self._on_key_up)
 
         self._df = pd.read_csv('words.csv')
-        self.w = self._df['Word'].astype('str')
-        m = (self.w.str.len() >= 8) & (self.w.str.len() < 10)
-        print(self._df[m])
-        print(len(self._df[m]))
+        # self.w = self._df['Word'].astype('str')
+        # m = (self.w.str.len() >= 8) & (self.w.str.len() < 10)
+        # print(self._df[m])
+        # print(len(self._df[m]))
         rand_word = random.randint(1, len(self._df['Word']))
         self.word_rand = self._df.iloc[rand_word]['Word']
         self.def_word = self._df.iloc[rand_word]['Definition']
@@ -296,3 +296,10 @@ class MyApp(App):
 
 if __name__ == "__main__":
     MyApp().run()
+
+#chadarat
+#chadarat
+#chadarat
+#chadarat
+#chadarat
+#chadarat

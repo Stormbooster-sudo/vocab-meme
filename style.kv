@@ -43,7 +43,7 @@ SM:
         cols: 2
         rows: 4
         Label:
-            text: 'Hard : random word that have wo'
+            text: 'Hard : random word that have word lenght more than 8 charactor \nat the start of the game, and no clue for any word.'
             font_name: 'impact'
             size: 500,150
         Button:
@@ -57,7 +57,7 @@ SM:
                 root.manager.current = 'start_game'
                 root.manager.transition.direction = 'right'
         Label:
-            text: 'Difficult'
+            text: 'Difficult : random word that have word lenght more than 4 charactor \n at the start of the game, and no clue for any word.'
             font_name: 'impact'
             size: 500,150
         Button:
@@ -67,10 +67,10 @@ SM:
             size_hint_x: None
             width: 300
             on_press:
-                root.manager.current = 'start_game'
+                root.manager.current = 'start_game' 
                 root.manager.transition.direction = 'right'
         Label:
-            text: 'Still Difficult ( but easier :) )'
+            text: 'Still Difficult ( but easier :) ) : random word that have word lenght more \n than 4 charactor at the start of the game, and have\n some clue for every word.'
             font_name: 'impact'
             size: 500,150
         Button:
