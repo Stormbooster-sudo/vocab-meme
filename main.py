@@ -38,13 +38,6 @@ class GameMain(Screen):
         self.keysPressed = set()
         self._entities = set()
 
-        Clock.schedule_interval(self._on_frame, 1/40)
-
-        # Sound
-        self.sound = SoundLoader.load('audio/sound.mp3')
-        self.sound.loop = True
-        self.sound.play()
-
     def test(self,level):
         print(level)
 
@@ -84,8 +77,7 @@ class GameMain(Screen):
 
         self._isPause = True
 
-        Clock.schedule_interval(self.spawn_items, 3)
-        Clock.schedule_interval(self.spawn_answer, 4)
+        self.start_game_render()
 
         self.player = Player(self)
         self.player.pos = (Window.width - Window.width/3, 0)
@@ -293,6 +285,11 @@ class SM(ScreenManager):
 
 kv = Builder.load_file('style.kv')
 class MyApp(App):
+    # Sound
+    sound = SoundLoader.load('audio/sound.mp3')
+    sound.loop = True
+    sound.play()   
+
     def build(self):
         return kv
 
