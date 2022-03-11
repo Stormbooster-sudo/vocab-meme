@@ -22,6 +22,7 @@ SM:
             center: self.parent.center
             size: 200,50
             text: 'Start Game'
+            font_name: 'impact'
             on_press:
                 root.manager.current = 'game_level'
                 root.manager.transition.direction = 'right'
@@ -30,6 +31,7 @@ SM:
             center: self.parent.center[0],self.parent.center[1] - 60
             size: 200,50
             text: 'Quit'
+            font_name: 'impact'
             on_press: app.stop() 
 <GameMain>:
     name: 'start_game'
@@ -37,29 +39,57 @@ SM:
 
 <GameLevelMenuScreen>:
     name: 'game_level'
-    BoxLayout:
-        orientation: 'vertical'
+    GridLayout:
+        cols: 2
+        rows: 4
+        Label:
+            text: 'Hard : random word that have wo'
+            font_name: 'impact'
+            size: 500,150
         Button:
             id: 'level_btn'
             text: 'Hard'
+            font_name: 'impact'
+            size_hint_x: None
+            width: 300
             on_press:
                 root.pressBtn("hard")
                 root.manager.current = 'start_game'
                 root.manager.transition.direction = 'right'
+        Label:
+            text: 'Difficult'
+            font_name: 'impact'
+            size: 500,150
         Button:
             id: 'level_btn'
             text: 'Difficult'
+            font_name: 'impact'
+            size_hint_x: None
+            width: 300
             on_press:
                 root.manager.current = 'start_game'
                 root.manager.transition.direction = 'right'
+        Label:
+            text: 'Still Difficult ( but easier :) )'
+            font_name: 'impact'
+            size: 500,150
         Button:
             id: 'level_btn'
             text: 'Still Difficult ( but easier :) )'
+            font_name: 'impact'
+            size_hint_x: None
+            width: 300
             on_press:
                 root.manager.current = 'start_game'
                 root.manager.transition.direction = 'right'
+        Label:
+            size_hint_x: None
+            width: 0
         Button:
             text: 'Back'
+            font_name: 'impact'
+            size_hint_x: None
+            width: 300
             on_press:
                 root.manager.current = 'game_menu'
                 root.manager.transition.direction = 'left'
