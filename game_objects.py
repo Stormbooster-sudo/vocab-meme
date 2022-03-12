@@ -44,7 +44,6 @@ class Player(Entity):
         self.size = (150,160)
         # self.source = "image/player.png"
         self.game.bind(on_frame=self.move_step)
-        self.pos = (400, 0)
 
 
     def stop_callbacks(self):
