@@ -255,11 +255,11 @@ class GameMain(Screen):
         if self._isPause:
             self._isPause = not self._isPause
             self.freeze_game()
-            self.resume_btn= Button(size_hint = (None, None),size=(200,70),pos=(Window.width/2 - 200, Window.height/2 - 230),text="Resume", font_name="impact")
+            self.resume_btn= Button(size_hint = (None, None),size=(200,70),pos=(Window.width/2 - 200, Window.height/2 - 230),text="Resume", font_name="impact", font_size = 30, outline_color=(0, 0, 0), outline_width=2)
             self.resume_btn.bind(on_press=self.pause)
             self.add_widget(self.resume_btn)
 
-            self.to_level_scn_btn = Button(size_hint = (None, None),size=(200,70),pos=(Window.width/2, Window.height/2 - 230),text="Back To Level", font_name="impact")
+            self.to_level_scn_btn = Button(size_hint = (None, None),size=(200,70),pos=(Window.width/2, Window.height/2 - 230),text="Back To Level", font_name="impact", font_size = 30, outline_color=(0, 0, 0), outline_width=2)
             self.to_level_scn_btn.bind(on_press=self.change_to_level_screen)
             self.add_widget(self.to_level_scn_btn)
 

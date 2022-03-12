@@ -23,7 +23,9 @@ SM:
             size: 200,50
             text: 'Start Game'
             font_name: 'impact'
-            font_size: 30
+            font_size: 40
+            outline_color: 0, 0, 0
+            outline_width: 2
             background_color:  0, 0, 0, 0
             on_press:
                 root.manager.current = 'game_level'
@@ -34,7 +36,9 @@ SM:
             size: 200,50
             text: 'Quit'
             font_name: 'impact'
-            font_size: 30
+            font_size: 40
+            outline_color: 0, 0, 0
+            outline_width: 2
             background_color:  0, 0, 0, 0
             on_press: app.stop() 
 <GameMain>:
@@ -98,7 +102,7 @@ SM:
             color: 1,1,1,1
             size_hint_x: None
             width: 300
-            font_size: 30
+            font_size: 80
             background_color:  0,0,0,1
             on_press:
                 root.manager.current = 'game_menu'
