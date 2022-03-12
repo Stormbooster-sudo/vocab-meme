@@ -1,3 +1,4 @@
+from kivy.uix.image import Image
 from kivy.app import App
 from kivy.graphics import Rectangle
 from kivy.core.window import Window
@@ -11,6 +12,7 @@ from kivy.config import Config
 from kivy.uix.button import Button
 
 import random
+from numpy import source
 import pandas as pd
 
 from game_objects import Player,Items
@@ -178,7 +180,7 @@ class GameMain(Screen):
     def clear_items(self):
         self._get_items = ""
 
-    # spawn item again
+    # refresh word and display word that have been gotten
     def refresh_word(self,is_alpha):
         if len(self.get_items) < len(self.word_rand):
             self._word_label.text = self._get_items + " _ "*(len(self.word_rand) - len(self.get_items))
@@ -253,17 +255,22 @@ class GameMain(Screen):
         if self._isPause:
             self._isPause = not self._isPause
             self.freeze_game()
-            self.resume_btn= Button(size_hint = (None, None),size=(200,70),pos=(Window.width/2 - 100, Window.height/2),text="Resume", font_name="impact")
+            self.resume_btn= Button(size_hint = (None, None),size=(200,70),pos=(Window.width/2 - 200, Window.height/2 - 230),text="Resume", font_name="impact")
             self.resume_btn.bind(on_press=self.pause)
             self.add_widget(self.resume_btn)
 
-            self.to_level_scn_btn = Button(size_hint = (None, None),size=(200,70),pos=(Window.width/2 - 100, Window.height/2 - 80),text="Back To Level", font_name="impact")
+            self.to_level_scn_btn = Button(size_hint = (None, None),size=(200,70),pos=(Window.width/2, Window.height/2 - 230),text="Back To Level", font_name="impact")
             self.to_level_scn_btn.bind(on_press=self.change_to_level_screen)
             self.add_widget(self.to_level_scn_btn)
+
+            self.meme_image = Image(source="image/meme/pause_menu.jpg",size_hint = (None, None),size=(700, Window.height), pos=(Window.width/2 - 350, Window.height/2 - Window.height/4 - 70) )
+            self.add_widget(self.meme_image)
+
         else:
             self.start_game_render()
             self.remove_widget(self.to_level_scn_btn)
             self.remove_widget(self.resume_btn)
+            self.remove_widget(self.meme_image)
             self._isPause = not self._isPause
     
     # กลับไปหน้าเลือกระดับความยาก                                                                                                
