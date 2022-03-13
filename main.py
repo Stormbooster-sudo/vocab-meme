@@ -52,17 +52,20 @@ class GameMain(Screen):
         self._keyboard.bind(on_key_up=self._on_key_up)
 
         #Get level
-        game_level = self.manager.get_screen('game_level')
-        print(game_level.g_level)
+        self.game_level = self.manager.get_screen('game_level')
+        self.level = self.game_level.g_level
+        print(self.game_level.g_level)
 
         self._df = pd.read_csv('words.csv')
-        # self.w = self._df['Word'].astype('str')
-        # m = (self.w.str.len() >= 8) & (self.w.str.len() < 10)
-        # print(self._df[m])
-        # print(len(self._df[m]))
-        rand_word = random.randint(1, len(self._df['Word']))
-        self.word_rand = self._df.iloc[rand_word]['Word']
-        self.def_word = self._df.iloc[rand_word]['Definition']
+        self._w = self._df['Word'].astype('str')
+        if self.level == "hard":
+            self.m = (self._w.str.len() >= 8) & (self._w.str.len() <= 12) 
+            self.word = self._df[self.m].sample()
+        else:
+            self.m = (self._w.str.len() >= 4)
+            self.word = self._df[self.m].sample()
+        self.word_rand = (self.word['Word'].to_string(index=False)).strip()
+        self.def_word = (self.word['Definition'].to_string(index=False)).lstrip()
         print(self.word_rand)
 
         self._word_label = CoreLabel(
