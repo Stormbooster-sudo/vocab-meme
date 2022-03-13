@@ -47,6 +47,7 @@ SM:
 
 <GameLevelMenuScreen>:
     name: 'game_level'
+    g_level: root.g_level
     GridLayout:
         cols: 2
         rows: 4
@@ -77,6 +78,7 @@ SM:
             background_normal: "image/Level/2.png"
             background_down: "image/Level/2.png"
             on_press:
+                root.pressBtn("difficult")
                 root.manager.current = 'start_game' 
                 root.manager.transition.direction = 'right'
         Label:
@@ -91,6 +93,7 @@ SM:
             background_normal: "image/Level/1.png"
             background_down: "image/Level/1.png"
             on_press:
+                root.pressBtn("easy")
                 root.manager.current = 'start_game'
                 root.manager.transition.direction = 'right'
         Button:

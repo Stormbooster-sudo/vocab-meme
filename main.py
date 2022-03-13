@@ -10,9 +10,9 @@ from kivy.uix.label import CoreLabel
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.config import Config
 from kivy.uix.button import Button
+from kivy.properties import StringProperty
 
 import random
-from numpy import source
 import pandas as pd
 
 from game_objects import Player,Items
@@ -41,6 +41,7 @@ class GameMain(Screen):
         self._entities = set()
 
     def test(self,level):
+        self.level = level
         print(level)
 
     # ค่าเริ่มต้นของโปรแกรม 
@@ -49,6 +50,10 @@ class GameMain(Screen):
             self._on_keyboard_closed, self)
         self._keyboard.bind(on_key_down=self._on_key_down)
         self._keyboard.bind(on_key_up=self._on_key_up)
+
+        #Get level
+        game_level = self.manager.get_screen('game_level')
+        print(game_level.g_level)
 
         self._df = pd.read_csv('words.csv')
         # self.w = self._df['Word'].astype('str')
@@ -278,18 +283,19 @@ class GameMain(Screen):
         self.manager.current = "game_level" 
         self.manager.transition.direction = 'right'                                                                                   
 
+
 class GameLevelMenuScreen(Screen):
+    g_level = StringProperty('')
     def pressBtn(self, level):
-        # print(level)
-        GameMain().test(level)
-    pass
+        self.g_level = level
+
+
 
 class MenuScreen(Screen):
     pass
 
 class SM(ScreenManager):
     pass
-
 kv = Builder.load_file('style.kv')
 class MyApp(App):
     # Sound
