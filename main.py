@@ -56,6 +56,7 @@ class GameMain(Screen):
         self.level = self.game_level.g_level
         print(self.game_level.g_level)
 
+        #Random word by level
         self._df = pd.read_csv('words.csv')
         self._w = self._df['Word'].astype('str')
         if self.level == "hard":
@@ -68,7 +69,12 @@ class GameMain(Screen):
         self.def_word = (self.word['Definition'].to_string(index=False)).lstrip()
         print(self.word_rand)
 
-        self._word_label = CoreLabel(
+        if self.level == "easy":
+            self._word_label = CoreLabel(
+                text= self.word_rand[0].upper() + "_ "*(len(self.word_rand) - 1), font_size=60, font_name="impact")
+            self.add_items(self.word_rand[0].upper())
+        else:
+            self._word_label = CoreLabel(
             text="_ "*len(self.word_rand), font_size=60, font_name="impact")
         self._word_label.refresh()
         self._def_label = CoreLabel(text=self.def_word.upper(), font_size=20, font_name="impact")
@@ -110,12 +116,14 @@ class GameMain(Screen):
     def spawn_answer(self, dt):
         # print(Window.width)
         get_str = list(self.get_items)
-        flag = 0
+        if self.level == 'easy':
+            get_str = get_str[1:] 
+        flag = 1
         for i in range(len(get_str)):
-            if self.word_rand[i].upper() == get_str[i]:
+            if self.word_rand[i + 1].upper() == get_str[i]:
                 flag += 1
             else:
-                flag = 0
+                flag = 1
         help_char = self.word_rand[flag].upper()
         # random_item_type = random.choice(help_list)
         random_x = random.randint(0, Window.width)
@@ -209,10 +217,16 @@ class GameMain(Screen):
             self._score_instruction.texture = self._score_label.texture
             self._score_instruction.size = self._score_label.texture.size
 
-            rand_word = random.randint(1,len(self._df['Word']))
-            self.word_rand = self._df.iloc[rand_word]['Word']
-            self.def_word = self._df.iloc[rand_word]['Definition'] 
-            self._word_label.text = "_ "*len(self.word_rand)
+            self.clear_items()
+            self.word = self._df[self.m].sample()
+            self.word_rand = (self.word['Word'].to_string(index=False)).strip()
+            self.def_word = (self.word['Definition'].to_string(index=False)).lstrip() 
+            if self.level == "easy":
+                self._word_label.text = self.word_rand[0].upper() + "_ "*(len(self.word_rand) - 1)
+                self.add_items(self.word_rand[0].upper())
+            else:
+                self._word_label.text = "_ "*len(self.word_rand)
+
             self._word_label.refresh()
             self._word_instruction.texture = self._word_label.texture
             self._word_instruction.size = self._word_label.texture.size
@@ -223,10 +237,14 @@ class GameMain(Screen):
             self._definition_instruction.texture = self._def_label.texture
             self._definition_instruction.size = self._def_label.texture.size
             self._definition_instruction.pos = ((Window.width/2) - (self._def_label.texture.size[0]/2), Window.height - 90)
-            self.clear_items()
             print(self.word_rand)
         else:
-            self._word_label.text = "_ "*len(self.word_rand)
+            self.clear_items()
+            if self.level == "easy":
+                self._word_label.text = self.word_rand[0].upper() + "_ "*(len(self.word_rand) - 1)
+                self.add_items(self.word_rand[0].upper())
+            else:
+                self._word_label.text = "_ "*len(self.word_rand)
             self._word_label.refresh()
             self._word_instruction.texture = self._word_label.texture
 
@@ -235,7 +253,6 @@ class GameMain(Screen):
             self._score_label.refresh()
             self._score_instruction.texture = self._score_label.texture
             self._score_instruction.size = self._score_label.texture.size
-            self.clear_items()
         # self._word_instruction.pos = (self._word_instruction.pos, Window.height - 70)
         
     # Bomb's result    
@@ -283,6 +300,7 @@ class GameMain(Screen):
     
     # กลับไปหน้าเลือกระดับความยาก                                                                                                
     def change_to_level_screen(self, value):
+        self.clear_items()
         self.manager.current = "game_level" 
         self.manager.transition.direction = 'right'                                                                                   
 
