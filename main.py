@@ -46,6 +46,8 @@ class GameMain(Screen):
 
     # ค่าเริ่มต้นของโปรแกรม 
     def initial(self):
+        self.clear_items()
+
         self._keyboard = Window.request_keyboard(
             self._on_keyboard_closed, self)
         self._keyboard.bind(on_key_down=self._on_key_down)
@@ -300,7 +302,6 @@ class GameMain(Screen):
     
     # กลับไปหน้าเลือกระดับความยาก                                                                                                
     def change_to_level_screen(self, value):
-        self.clear_items()
         self.manager.current = "game_level" 
         self.manager.transition.direction = 'right'                                                                                   
 
