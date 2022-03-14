@@ -38,7 +38,6 @@ class GameMain(Screen):
 
         # ปุ่มกด 
         self.keysPressed = set()
-        self._entities = set()
 
     def test(self,level):
         self.level = level
@@ -93,8 +92,11 @@ class GameMain(Screen):
             self._definition_instruction = Rectangle(texture=self._def_label.texture, pos=(
                 (Window.width/2) - (self._def_label.texture.size[0]/2), Window.height - 90), size=self._def_label.texture.size)
 
+        #Set game status
         self._isPause = True
-
+        #Set entities set to empty set
+        self._entities = set()
+        #Start render game
         self.start_game_render()
 
         self.player = Player(self)
