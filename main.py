@@ -204,14 +204,15 @@ class GameMain(Screen):
     def refresh_word(self,is_alpha):
         if len(self.get_items) < len(self.word_rand):
             self._word_label.text = self._get_items + " _ "*(len(self.word_rand) - len(self.get_items))
-            self._word_label.refresh()
-            self._word_instruction.texture = self._word_label.texture
-            self._word_instruction.size = self._word_label.texture.size
             print(self._word_label.texture.size)
             print(self._word_instruction.pos[0])
             # print(is_alpha)
-            if not is_alpha:
-                self._word_instruction.pos = (Window.width - 450, Window.height - 70)
+            if not is_alpha and self.level == "easy":
+                self._word_label.text = self.word_rand[0].upper() + "_ "*(len(self.word_rand) - 1)
+                self.add_items(self.word_rand[0].upper())
+            self._word_label.refresh()
+            self._word_instruction.texture = self._word_label.texture
+            self._word_instruction.size = self._word_label.texture.size
             self._word_instruction.pos = ((Window.width/2) - (self._word_label.texture.size[0]/2), Window.height - 70)
 
         elif self.get_items == self.word_rand.upper():
