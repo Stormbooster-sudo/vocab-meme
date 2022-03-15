@@ -86,10 +86,10 @@ class GameMain(Screen):
 
             Rectangle(source="image/background.png", pos=(0, 0),
                       size=(Window.width, Window.height))
-            Rectangle(source="image/hp/hp5.png", pos=(0, Window.height-40),
+            self._hp_display = Rectangle(source="image/hp/hp5.png", pos=(0, Window.height - 40),
                       size=(100,50))
             self._score_instruction = Rectangle(texture=self._score_label.texture, pos=(
-                10, Window.height - 60), size=self._score_label.texture.size)
+                15, Window.height - 60), size=self._score_label.texture.size)
             self._word_instruction = Rectangle(texture=self._word_label.texture, pos=(
                 (Window.width/2) - (self._word_label.texture.size[0]/2), Window.height - 70), size=self._word_label.texture.size)
             self._definition_instruction = Rectangle(texture=self._def_label.texture, pos=(
@@ -256,11 +256,8 @@ class GameMain(Screen):
             self._word_label.refresh()
             self._word_instruction.texture = self._word_label.texture
 
-            self._score -= int(len(self.word_rand)/2)
-            self._score_label.text = F"Score : {self._score}"
-            self._score_label.refresh()
-            self._score_instruction.texture = self._score_label.texture
-            self._score_instruction.size = self._score_label.texture.size
+            self.health -= 1
+            self._hp_display.source = F"image/hp/hp{self.health}.png"
         # self._word_instruction.pos = (self._word_instruction.pos, Window.height - 70)
         
     # Bomb's result    
