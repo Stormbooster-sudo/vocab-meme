@@ -10,6 +10,7 @@ from kivy.uix.label import CoreLabel
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.config import Config
 from kivy.uix.button import Button
+from kivy.uix.label import Label
 from kivy.properties import StringProperty
 
 import random
@@ -259,7 +260,7 @@ class GameMain(Screen):
             self.health -= 1
             self._hp_display.source = F"image/hp/hp{self.health}.png"
             if self.health == 0:
-                self.play_again()
+               self.play_again()
                 
         # self._word_instruction.pos = (self._word_instruction.pos, Window.height - 70)
         
@@ -298,7 +299,8 @@ class GameMain(Screen):
 
             self.meme_image = Image(source="image/meme/pause_menu.jpg",size_hint = (None, None),size=(700, Window.height), pos=(Window.width/2 - 350, Window.height/2 - Window.height/4 - 70) )
             self.add_widget(self.meme_image)
-
+        
+            self.score_display = Label(text=self._score)
         else:
             self.start_game_render()
             self.remove_widget(self.to_level_scn_btn)
@@ -313,17 +315,13 @@ class GameMain(Screen):
     
     def play_again(self):
         self.freeze_game()
-        # self.play_again_btn= Button(size_hint = (None, None),size=(200,70),pos=(Window.width/2 - 200, Window.height/2 - 230),text="Play Again", font_name="impact", font_size = 30, outline_color=(0, 0, 0), outline_width=2)
-        # self.play_again_btn.bind(on_press=self.change_to_game_screen)
-        # self.add_widget(self.play_again_btn)
-        
         self.to_level_scn_btn = Button(size_hint = (None, None),size=(200,70),pos=(Window.width/2 - 100, Window.height/2 - 230),text="Back To Level", font_name="impact", font_size = 30, outline_color=(0, 0, 0), outline_width=2)
         self.to_level_scn_btn.bind(on_press=self.change_to_level_screen)
         self.add_widget(self.to_level_scn_btn)
 
-        self.meme_image = Image(source="image/meme/pause_menu.jpg",size_hint = (None, None),size=(700, Window.height), pos=(Window.width/2 - 350, Window.height/2 - Window.height/4 - 70) )
+        rand_image = random.randint(1,8)
+        self.meme_image = Image(source=F"image/meme/cut-scene/{rand_image}.png",size_hint = (None, None),size=(700, Window.height - 200), pos=(Window.width/2 - 350, Window.height/2 - Window.height/4 ) )
         self.add_widget(self.meme_image)
-
                                                                                    
 
 
