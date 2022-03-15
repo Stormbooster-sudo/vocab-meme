@@ -46,6 +46,7 @@ class GameMain(Screen):
     # ค่าเริ่มต้นของโปรแกรม 
     def initial(self):
         self.clear_items()
+        self.health = 5
 
         self._keyboard = Window.request_keyboard(
             self._on_keyboard_closed, self)
@@ -85,8 +86,10 @@ class GameMain(Screen):
 
             Rectangle(source="image/background.png", pos=(0, 0),
                       size=(Window.width, Window.height))
+            self._hp_display = Rectangle(source="image/hp/hp5.png", pos=(0, Window.height - 40),
+                      size=(100,50))
             self._score_instruction = Rectangle(texture=self._score_label.texture, pos=(
-                0, Window.height - 50), size=self._score_label.texture.size)
+                15, Window.height - 60), size=self._score_label.texture.size)
             self._word_instruction = Rectangle(texture=self._word_label.texture, pos=(
                 (Window.width/2) - (self._word_label.texture.size[0]/2), Window.height - 70), size=self._word_label.texture.size)
             self._definition_instruction = Rectangle(texture=self._def_label.texture, pos=(
@@ -253,11 +256,11 @@ class GameMain(Screen):
             self._word_label.refresh()
             self._word_instruction.texture = self._word_label.texture
 
-            self._score -= int(len(self.word_rand)/2)
-            self._score_label.text = F"Score : {self._score}"
-            self._score_label.refresh()
-            self._score_instruction.texture = self._score_label.texture
-            self._score_instruction.size = self._score_label.texture.size
+            self.health -= 1
+            self._hp_display.source = F"image/hp/hp{self.health}.png"
+            if self.health == 0:
+                self.play_again()
+                
         # self._word_instruction.pos = (self._word_instruction.pos, Window.height - 70)
         
     # Bomb's result    
@@ -302,11 +305,27 @@ class GameMain(Screen):
             self.remove_widget(self.resume_btn)
             self.remove_widget(self.meme_image)
             self._isPause = not self._isPause
-    
-    # กลับไปหน้าเลือกระดับความยาก                                                                                                
+
+     # กลับไปหน้าเลือกระดับความยาก                                                                                                
     def change_to_level_screen(self, value):
         self.manager.current = "game_level" 
-        self.manager.transition.direction = 'right'                                                                                   
+        self.manager.transition.direction = 'right'   
+    
+    def play_again(self):
+        self.freeze_game()
+        # self.play_again_btn= Button(size_hint = (None, None),size=(200,70),pos=(Window.width/2 - 200, Window.height/2 - 230),text="Play Again", font_name="impact", font_size = 30, outline_color=(0, 0, 0), outline_width=2)
+        # self.play_again_btn.bind(on_press=self.change_to_game_screen)
+        # self.add_widget(self.play_again_btn)
+        
+        self.to_level_scn_btn = Button(size_hint = (None, None),size=(200,70),pos=(Window.width/2 - 100, Window.height/2 - 230),text="Back To Level", font_name="impact", font_size = 30, outline_color=(0, 0, 0), outline_width=2)
+        self.to_level_scn_btn.bind(on_press=self.change_to_level_screen)
+        self.add_widget(self.to_level_scn_btn)
+
+        self.meme_image = Image(source="image/meme/pause_menu.jpg",size_hint = (None, None),size=(700, Window.height), pos=(Window.width/2 - 350, Window.height/2 - Window.height/4 - 70) )
+        self.add_widget(self.meme_image)
+
+                                                                                   
+
 
 
 class GameLevelMenuScreen(Screen):
