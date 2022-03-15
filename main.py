@@ -305,25 +305,27 @@ class GameMain(Screen):
             self.remove_widget(self.resume_btn)
             self.remove_widget(self.meme_image)
             self._isPause = not self._isPause
+
+     # กลับไปหน้าเลือกระดับความยาก                                                                                                
+    def change_to_level_screen(self, value):
+        self.manager.current = "game_level" 
+        self.manager.transition.direction = 'right'   
     
     def play_again(self):
         self.freeze_game()
-        self.play_again_btn= Button(size_hint = (None, None),size=(200,70),pos=(Window.width/2 - 200, Window.height/2 - 230),text="Play Again", font_name="impact", font_size = 30, outline_color=(0, 0, 0), outline_width=2)
-        self.play_again_btn.bind(on_press=self.initial)
-        self.add_widget(self.play_again_btn)
+        # self.play_again_btn= Button(size_hint = (None, None),size=(200,70),pos=(Window.width/2 - 200, Window.height/2 - 230),text="Play Again", font_name="impact", font_size = 30, outline_color=(0, 0, 0), outline_width=2)
+        # self.play_again_btn.bind(on_press=self.change_to_game_screen)
+        # self.add_widget(self.play_again_btn)
         
-        self.to_level_scn_btn = Button(size_hint = (None, None),size=(200,70),pos=(Window.width/2, Window.height/2 - 230),text="Back To Level", font_name="impact", font_size = 30, outline_color=(0, 0, 0), outline_width=2)
+        self.to_level_scn_btn = Button(size_hint = (None, None),size=(200,70),pos=(Window.width/2 - 100, Window.height/2 - 230),text="Back To Level", font_name="impact", font_size = 30, outline_color=(0, 0, 0), outline_width=2)
         self.to_level_scn_btn.bind(on_press=self.change_to_level_screen)
         self.add_widget(self.to_level_scn_btn)
 
         self.meme_image = Image(source="image/meme/pause_menu.jpg",size_hint = (None, None),size=(700, Window.height), pos=(Window.width/2 - 350, Window.height/2 - Window.height/4 - 70) )
         self.add_widget(self.meme_image)
 
-    
-    # กลับไปหน้าเลือกระดับความยาก                                                                                                
-    def change_to_level_screen(self, value):
-        self.manager.current = "game_level" 
-        self.manager.transition.direction = 'right'                                                                                   
+                                                                                   
+
 
 
 class GameLevelMenuScreen(Screen):
