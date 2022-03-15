@@ -257,10 +257,10 @@ class GameMain(Screen):
             self._word_instruction.texture = self._word_label.texture
 
             self.health -= 1
+            self._hp_display.source = F"image/hp/hp{self.health}.png"
             if self.health == 0:
                 self.play_again()
-            else:
-                self._hp_display.source = F"image/hp/hp{self.health}.png"
+                
         # self._word_instruction.pos = (self._word_instruction.pos, Window.height - 70)
         
     # Bomb's result    
