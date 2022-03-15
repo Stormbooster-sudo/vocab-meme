@@ -46,6 +46,7 @@ class GameMain(Screen):
     # ค่าเริ่มต้นของโปรแกรม 
     def initial(self):
         self.clear_items()
+        self.health = 5
 
         self._keyboard = Window.request_keyboard(
             self._on_keyboard_closed, self)
@@ -85,8 +86,10 @@ class GameMain(Screen):
 
             Rectangle(source="image/background.png", pos=(0, 0),
                       size=(Window.width, Window.height))
+            Rectangle(source="image/hp/hp5.png", pos=(0, Window.height-40),
+                      size=(100,50))
             self._score_instruction = Rectangle(texture=self._score_label.texture, pos=(
-                0, Window.height - 50), size=self._score_label.texture.size)
+                10, Window.height - 60), size=self._score_label.texture.size)
             self._word_instruction = Rectangle(texture=self._word_label.texture, pos=(
                 (Window.width/2) - (self._word_label.texture.size[0]/2), Window.height - 70), size=self._word_label.texture.size)
             self._definition_instruction = Rectangle(texture=self._def_label.texture, pos=(
