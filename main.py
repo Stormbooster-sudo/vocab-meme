@@ -300,7 +300,6 @@ class GameMain(Screen):
             self.meme_image = Image(source="image/meme/pause_menu.jpg",size_hint = (None, None),size=(700, Window.height), pos=(Window.width/2 - 350, Window.height/2 - Window.height/4 - 70) )
             self.add_widget(self.meme_image)
         
-            self.score_display = Label(text=self._score)
         else:
             self.start_game_render()
             self.remove_widget(self.to_level_scn_btn)
