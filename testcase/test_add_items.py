@@ -44,3 +44,14 @@ class AddItemTest(unittest.TestCase):
         result = game.get_items
         self.assertEqual(result, expected_result)
 
+    def test_add_SAHACHAT(self):
+        game = GameMain()
+        list_name = ["S","A","H","A","C","H","A","T"]
+        for i in list_name:
+            game.add_items(i)
+        
+        expected_result = "SAHACHAT"
+
+        result = game.get_items
+        self.assertEqual(result, expected_result)
+
