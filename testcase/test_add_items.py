@@ -55,3 +55,14 @@ class AddItemTest(unittest.TestCase):
         result = game.get_items
         self.assertEqual(result, expected_result)
 
+    def test_add_SUN(self):
+        game = GameMain()
+        list_name = ["S","U","N"]
+        for i in list_name:
+            game.add_items(i)
+        
+        expected_result = "SUN"
+
+        result = game.get_items
+        self.assertEqual(result, expected_result)
+
