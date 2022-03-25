@@ -3,7 +3,7 @@ from main import GameMain
 from game_objects import Player, Items
 import unittest
 
-class HalfScoreTest(unittest.TestCase):
+class ColisionTest(unittest.TestCase):
     def test_colision_itemA_pos_10_10_true(self):
         game = GameMain()
         e1 = Player(game)
