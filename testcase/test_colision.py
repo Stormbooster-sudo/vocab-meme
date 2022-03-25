@@ -28,8 +28,10 @@ class ColisionTest(unittest.TestCase):
         game = GameMain()
         e1 = Player(game)
         e1.pos = (27, 45)
-        pos = (38, 60)
+        pos = (38, 56)
         e2 = Items(pos = pos,speed =  0,item_type= "C", game = game)
 
         result = game.collides(e1, e2)
         self.assertTrue(result)
+
+
