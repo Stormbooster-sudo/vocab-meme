@@ -27,4 +27,46 @@ class ClearItemTest(unittest.TestCase):
         result = game.get_items
         self.assertEqual(result, expected_result)
     
+    def test_clear_CHADARAT(self):
+        game = GameMain()
+        list_name = ['C','H','A','D','A','R','A','T']
+        for i in list_name:
+            game.add_items(i)
+        
+        game.clear_items()
+
+        expected_result = ""
+
+        result = game.get_items
+        self.assertEqual(result, expected_result)
+    
+    def test_clear_POP(self):
+        game = GameMain()
+        list_name = ['P','O','P']
+        for i in list_name:
+            game.add_items(i)
+        
+        game.clear_items()
+
+        expected_result = ""
+
+        result = game.get_items
+        self.assertEqual(result, expected_result)
+    
+    def test_clear_PANG(self):
+        game = GameMain()
+        list_name = ['P','A','N','G']
+        for i in list_name:
+            game.add_items(i)
+        
+        game.clear_items()
+
+        expected_result = ""
+
+        result = game.get_items
+        self.assertEqual(result, expected_result)
+        
+  
+    
+    
     
