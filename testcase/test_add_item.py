@@ -33,3 +33,14 @@ class AddItemTest(unittest.TestCase):
         result = game.get_items
         self.assertEqual(result, expected_result)
 
+    def test_add_SOURCE(self):
+        game = GameMain()
+        list_name = ["S","O","U","R","C","E"]
+        for i in list_name:
+            game.add_items(i)
+
+        expected_result = "SOURCE"
+
+        result = game.get_items
+        self.assertEqual(result, expected_result)
+
