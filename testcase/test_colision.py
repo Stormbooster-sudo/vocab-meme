@@ -13,3 +13,48 @@ class ColisionTest(unittest.TestCase):
 
         result = game.collides(e1, e2)
         self.assertTrue(result)
+
+    def test_colision_itemB_pos_40_50_true(self):
+        game = GameMain()
+        e1 = Player(game)
+        e1.pos = (20, 30)
+        pos = (40, 50)
+        e2 = Items(pos = pos,speed =  0,item_type= "B", game = game)
+
+        result = game.collides(e1, e2)
+        self.assertTrue(result)
+
+    def test_colision_itemC_pos_38_56_true(self):
+        game = GameMain()
+        e1 = Player(game)
+        e1.pos = (27, 45)
+        pos = (38, 56)
+        e2 = Items(pos = pos,speed =  0,item_type= "C", game = game)
+
+        result = game.collides(e1, e2)
+        self.assertTrue(result)
+
+    def test_not_colision_itemD_pos_600_700_true(self):
+        game = GameMain()
+        e1 = Player(game)
+        e1.pos = (20, 30)
+        pos = (600, 700)
+        e2 = Items(pos = pos,speed =  0,item_type= "D", game = game)
+
+        result = game.collides(e1, e2)
+        self.assertFalse(result)
+
+
+    def test_not_colision_itemE_pos_800_820_true(self):
+        game = GameMain()
+        e1 = Player(game)
+        e1.pos = (40, 60)
+        pos = (800, 820)
+        e2 = Items(pos = pos,speed =  0,item_type= "E", game = game)
+
+        result = game.collides(e1, e2)
+        self.assertFalse(result)
+    
+
+    
+
