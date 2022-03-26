@@ -17,3 +17,29 @@ class MoveStepTest(unittest.TestCase):
         result = player.pos
 
         self.assertEqual(result, expected_result)
+    
+    def test_move_down_1_time(self):
+        game = GameMain()
+        player = Player(game)
+        player.pos = (0,0)
+        game.keysPressed.add("s")
+        player.move_step(sender=None, dt = 1/500)
+        
+        expected_result = (0, -1.0)
+
+        result = player.pos
+
+        self.assertEqual(result, expected_result)
+
+    def test_move_right_1_time(self):
+        game = GameMain()
+        player = Player(game)
+        player.pos = (0,0)
+        game.keysPressed.add("d")
+        player.move_step(sender=None, dt = 1/500)
+        
+        expected_result = (1.0, 0)
+
+        result = player.pos
+
+        self.assertEqual(result, expected_result)
