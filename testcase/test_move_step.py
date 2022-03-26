@@ -116,3 +116,22 @@ class MoveStepTest(unittest.TestCase):
         result = player.pos
 
         self.assertEqual(result, expected_result)
+    
+    def test_move_right_7_times_move_up_10_times(self):
+        game = GameMain()
+        player = Player(game)
+        player.pos = (0,0)
+        for i in range(7):
+            game.keysPressed.add("d")
+            player.move_step(sender=None, dt = 1/500)
+            game.keysPressed.remove("d")
+        for i in range(10):
+            game.keysPressed.add("w")
+            player.move_step(sender=None, dt = 1/500)
+            game.keysPressed.remove("w")
+        
+        expected_result = (7.0, 10.0)
+
+        result = player.pos
+
+        self.assertEqual(result, expected_result)
