@@ -86,3 +86,15 @@ class HalfScoreTest(unittest.TestCase):
         result = game._score
 
         self.assertEqual(result, expected_result)
+
+    def test_half_score_init_69(self):
+        game = GameMain()
+        game._score = 69
+        game._score_instruction = Rectangle()
+        game.half_score()
+
+        expected_result = 34
+        
+        result = game._score
+
+        self.assertEqual(result, expected_result)
