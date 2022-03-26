@@ -135,3 +135,20 @@ class MoveStepTest(unittest.TestCase):
         result = player.pos
 
         self.assertEqual(result, expected_result)
+    
+    def test_not_move_wrong_keyword_2_times(self):
+        game = GameMain()
+        player = Player(game)
+        player.pos = (0,0)
+        game.keysPressed.add("q")
+        player.move_step(sender=None, dt = 1/500)
+        game.keysPressed.remove("q")
+        game.keysPressed.add("z")
+        player.move_step(sender=None, dt = 1/500)
+        game.keysPressed.remove("z")
+        
+        expected_result = (0, 0)
+
+        result = player.pos
+
+        self.assertEqual(result, expected_result)
