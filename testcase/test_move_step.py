@@ -86,3 +86,18 @@ class MoveStepTest(unittest.TestCase):
         result = player.pos
 
         self.assertEqual(result, expected_result)
+    
+    def test_move_left_5_times(self):
+        game = GameMain()
+        player = Player(game)
+        player.pos = (0,0)
+        for i in range(5):
+            game.keysPressed.add("a")
+            player.move_step(sender=None, dt = 1/500)
+            game.keysPressed.remove("a")
+        
+        expected_result = (-5.0, 0)
+
+        result = player.pos
+
+        self.assertEqual(result, expected_result)
