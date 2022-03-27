@@ -65,5 +65,14 @@ class ColisionTest(unittest.TestCase):
         result = game.collides(e1, e2)
         self.assertTrue(result)
     
+    def test_colision_itemG_pos_134_107_true(self):
+        game = GameMain()
+        e1 = Player(game)
+        e1.pos = (85, 58)
+        pos = (134, 107)
+        e2 = Items(pos = pos,speed =  0,item_type= "G", game = game)
+
+        result = game.collides(e1, e2)
+        self.assertTrue(result)
     
 
