@@ -25,10 +25,6 @@ class GameMain(Screen):
     # set ค่าเริ่มต้น
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._score_label = CoreLabel(
-            text="Score: 0", font_size=20, font_name="impact")
-        self._score_label.refresh()
-        self._score = 0
 
         # เก็บ key
         self.item_type = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
@@ -49,6 +45,10 @@ class GameMain(Screen):
     def initial(self):
         self.clear_items()
         self.health = 5
+        self._score_label = CoreLabel(
+            text="Score: 0", font_size=20, font_name="impact")
+        self._score_label.refresh()
+        self._score = 0
 
         self._keyboard = Window.request_keyboard(
             self._on_keyboard_closed, self)
