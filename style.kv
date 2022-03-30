@@ -6,13 +6,6 @@ SM:
 <MenuScreen>:
     name : "game_menu"
     RelativeLayout:
-        # Image:
-        #     id: 'gif'
-        #     source: "fire.gif"
-        #     pos: 0,0
-        #     size:20,20
-        #     anim_loop: 1
-        #     allow_stretch: True
         canvas.before:
             Rectangle:
                 source: "image/MenuBc.png"
@@ -22,42 +15,42 @@ SM:
             size_hint: None, None
             center: self.parent.center
             size: 200,50
-            text: 'Start Game'
-            font_name: 'impact'
+            text: "Start Game"
+            font_name: "impact"
             font_size: 40
             outline_color: 0, 0, 0
             outline_width: 2
             background_color:  0, 0, 0, 0
             on_press:
-                root.manager.current = 'game_level'
-                root.manager.transition.direction = 'right'
+                root.manager.current = "game_level"
+                root.manager.transition.direction = "right"
         Button:
             size_hint: None, None
             center: self.parent.center[0],self.parent.center[1] - 70
             size: 200,50
-            text: 'Quit'
-            font_name: 'impact'
+            text: "Quit"
+            font_name: "impact"
             font_size: 40
             outline_color: 0, 0, 0
             outline_width: 2
             background_color:  0, 0, 0, 0
             on_press: app.stop() 
 <GameMain>:
-    name: 'start_game'
+    name: "start_game"
     on_enter: self.initial()
 
 <GameLevelMenuScreen>:
-    name: 'game_level'
+    name: "game_level"
     g_level: root.g_level
     GridLayout:
         cols: 2
         rows: 4
         Label:
-            text: 'Hard : random word that have word lenght more than 8 charactor \nat the start of the game, and no clue for any word.'
-            font_name: 'impact'
+            text: "Hard : random word that have word lenght more than 8 charactor \nat the start of the game, and no clue for any word."
+            font_name: "impact"
             size: 500,150
         Button:
-            id: 'level_btn'
+            id: "level_btn"
             size_hint_x: None
             width: 300
             font_size: 80
@@ -65,52 +58,52 @@ SM:
             background_down: "image/Level/3.png"
             on_press:
                 root.pressBtn("hard")
-                root.manager.current = 'start_game'
-                root.manager.transition.direction = 'right'
+                root.manager.current = "start_game"
+                root.manager.transition.direction = "right"
         Label:
-            text: 'Difficult : random word that have word lenght more than 4 charactor \n at the start of the game, and no clue for any word.'
-            font_name: 'impact'
+            text: "Difficult : random word that have word lenght more than 4 charactor \n at the start of the game, and no clue for any word."
+            font_name: "impact"
             size: 500,150
         Button:
-            id: 'level_btn'
-            font_name: 'impact'
+            id: "level_btn"
+            font_name: "impact"
             size_hint_x: None
             width: 300
             background_normal: "image/Level/2.png"
             background_down: "image/Level/2.png"
             on_press:
                 root.pressBtn("difficult")
-                root.manager.current = 'start_game' 
-                root.manager.transition.direction = 'right'
+                root.manager.current = "start_game" 
+                root.manager.transition.direction = "right"
         Label:
-            text: 'Still Difficult ( but easier :) ) : random word that have word lenght more \nthan 4 charactor at the start of the game, and have some clue for \nevery word.'
-            font_name: 'impact'
+            text: "Still Difficult ( but easier :) ) : random word that have word lenght more \nthan 4 charactor at the start of the game, and have some clue for \nevery word."
+            font_name: "impact"
             size: 500,150
         Button:
-            id: 'level_btn'
-            font_name: 'impact'
+            id: "level_btn"
+            font_name: "impact"
             size_hint_x: None
             width: 300
             background_normal: "image/Level/1.png"
             background_down: "image/Level/1.png"
             on_press:
                 root.pressBtn("easy")
-                root.manager.current = 'start_game'
-                root.manager.transition.direction = 'right'
+                root.manager.current = "start_game"
+                root.manager.transition.direction = "right"
         Button:
             background_normal: "image/meme/1.jpg"
             background_down: "image/meme/2.jpg"
         Button:
-            text: 'Back'
-            font_name: 'impact'
+            text: "Back"
+            font_name: "impact"
             color: 1,1,1,1
             size_hint_x: None
             width: 300
             font_size: 80
             background_color:  0,0,0,1
             on_press:
-                root.manager.current = 'game_menu'
-                root.manager.transition.direction = 'left'
+                root.manager.current = "game_menu"
+                root.manager.transition.direction = "left"
 
 
 

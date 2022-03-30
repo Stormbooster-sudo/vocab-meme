@@ -26,9 +26,10 @@ class GameMain(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        # เก็บ key
+        # เก็บ keyword (items)
         self.item_type = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
                           "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "Bomb", "Eraser"]
+        
         self._get_items = ""
 
         # รีเฟรชหน้าเกม
@@ -37,21 +38,18 @@ class GameMain(Screen):
         # ปุ่มกด
         self.keysPressed = set()
 
-    def test(self, level):
-        self.level = level
-        print(level)
-
     # ค่าเริ่มต้นของโปรแกรม
     def initial(self):
+        # Clear all item, if game had been play.
         self.clear_items()
+        # Set initial HP
         self.health = 5
-        self._score_label = CoreLabel(
-            text="Score: 0", font_size=20, font_name="impact")
+        # Set initial Score
+        self._score_label = CoreLabel(text="Score: 0", font_size=20, font_name="impact")
         self._score_label.refresh()
         self._score = 0
 
-        self._keyboard = Window.request_keyboard(
-            self._on_keyboard_closed, self)
+        self._keyboard = Window.request_keyboard(self._on_keyboard_closed, self)
         self._keyboard.bind(on_key_down=self._on_key_down)
         self._keyboard.bind(on_key_up=self._on_key_up)
 
@@ -67,37 +65,65 @@ class GameMain(Screen):
             self.m = (self._w.str.len() >= 8) & (self._w.str.len() <= 12)
             self.word = self._df[self.m].sample()
         else:
-            self.m = (self._w.str.len() >= 4)
+            self.m = self._w.str.len() >= 4
             self.word = self._df[self.m].sample()
         self.word_rand = (self.word["Word"].to_string(index=False)).strip()
-        self.def_word = (
-            self.word["Definition"].to_string(index=False)).lstrip()
-        print(self.word_rand)
+        self.def_word = (self.word["Definition"].to_string(index=False)).lstrip()
 
+        # Level declaration by its rule
         if self.level == "easy":
             self._word_label = CoreLabel(
-                text=self.word_rand[0].upper() + "_ "*(len(self.word_rand) - 1), font_size=60, font_name="impact")
+                text=self.word_rand[0].upper() + "_ " * (len(self.word_rand) - 1),
+                font_size=60,
+                font_name="impact",
+            )
             self.add_items(self.word_rand[0].upper())
         else:
             self._word_label = CoreLabel(
-                text="_ "*len(self.word_rand), font_size=60, font_name="impact")
+                text="_ " * len(self.word_rand), font_size=60, font_name="impact"
+            )
         self._word_label.refresh()
         self._def_label = CoreLabel(
-            text=self.def_word.upper(), font_size=20, font_name="impact")
+            text=self.def_word.upper(), font_size=20, font_name="impact"
+        )
         self._def_label.refresh()
 
+        # Add element which would appear on game screen
         with self.canvas:
-
-            Rectangle(source="image/background.png", pos=(0, 0),
-                      size=(Window.width, Window.height))
-            self._hp_display = Rectangle(source="image/hp/hp5.png", pos=(0, Window.height - 40),
-                                         size=(100, 50))
-            self._score_instruction = Rectangle(texture=self._score_label.texture, pos=(
-                15, Window.height - 60), size=self._score_label.texture.size)
-            self._word_instruction = Rectangle(texture=self._word_label.texture, pos=(
-                (Window.width/2) - (self._word_label.texture.size[0]/2), Window.height - 70), size=self._word_label.texture.size)
-            self._definition_instruction = Rectangle(texture=self._def_label.texture, pos=(
-                (Window.width/2) - (self._def_label.texture.size[0]/2), Window.height - 90), size=self._def_label.texture.size)
+            # Background
+            Rectangle(
+                source="image/background.png",
+                pos=(0, 0),
+                size=(Window.width, Window.height),
+            )
+            # Hp status
+            self._hp_display = Rectangle(
+                source="image/hp/hp5.png", pos=(0, Window.height - 40), size=(100, 50)
+            )
+            # Score
+            self._score_instruction = Rectangle(
+                texture=self._score_label.texture,
+                pos=(15, Window.height - 60),
+                size=self._score_label.texture.size,
+            )
+            # Word
+            self._word_instruction = Rectangle(
+                texture=self._word_label.texture,
+                pos=(
+                    (Window.width / 2) - (self._word_label.texture.size[0] / 2),
+                    Window.height - 70,
+                ),
+                size=self._word_label.texture.size,
+            )
+            # Word's definition
+            self._definition_instruction = Rectangle(
+                texture=self._def_label.texture,
+                pos=(
+                    (Window.width / 2) - (self._def_label.texture.size[0] / 2),
+                    Window.height - 90,
+                ),
+                size=self._def_label.texture.size,
+            )
 
         # Set game status
         self._isPause = True
@@ -105,28 +131,31 @@ class GameMain(Screen):
         self._entities = set()
         # Start render game
         self.start_game_render()
-
+        # Add player to the game
         self.player = Player(self)
-        self.player.pos = (Window.width - Window.width/3, 0)
+        self.player.pos = (Window.width - Window.width / 3, 0)
         self.add_entity(self.player)
-
-        self.pause_button = Button(size_hint=(None, None), size=(50, 50), pos=(
-            Window.width - 50, Window.height - 50), text="| |", font_name="impact")
+        # Add pause button to the game
+        self.pause_button = Button(
+            size_hint=(None, None),
+            size=(50, 50),
+            pos=(Window.width - 50, Window.height - 50),
+            text="| |",
+            font_name="impact",
+        )
         self.pause_button.bind(on_press=self.pause)
         self.add_widget(self.pause_button)
 
     # summon all item from random.
     def spawn_items(self, dt):
         print(Window.width)
-        random_item_type = random.choice(
-            self.item_type)  # สุ่มค่าจาก self.item_type
+        random_item_type = random.choice(self.item_type)  # สุ่มค่าจาก self.item_type
         random_x = random.randint(0, Window.width)
         y = Window.height - 80  # เก็บค่าความสูงความยาวหน้าต่างโปรแกรม
         random_speed = random.randint(30, 100)  # Item"s speed drop.
-        self.add_entity(
-            Items((random_x, y), random_speed, random_item_type, self))
+        self.add_entity(Items((random_x, y), random_speed, random_item_type, self))
 
-    # เฉลยคำตอบ
+    # summon some charactor from the answer
     def spawn_answer(self, dt):
         # print(Window.width)
         get_str = list(self.get_items)
@@ -156,10 +185,11 @@ class GameMain(Screen):
         r2w = e2.size[0]
         r2h = e2.size[1]
 
-        if (r1x < r2x + r2w and r1x + r1w > r2x and r1y < r2y + r2h and r1y + r1h > r2y):
+        if r1x < r2x + r2w and r1x + r1w > r2x and r1y < r2y + r2h and r1y + r1h > r2y:
             return True
         else:
             return False
+
     # ตรวจจับ item ที่ถูกชน
 
     def colliding_entities(self, entity):
@@ -168,24 +198,29 @@ class GameMain(Screen):
             if self.collides(e, entity) and e != entity:
                 result.add(e)
         return result
+
     # การเรนเดอร์ภาพ
 
     def _on_frame(self, dt):
         self.dispatch("on_frame", dt)
+
     # การเรนเดอร์ภาพ
 
     def on_frame(self, dt):
         pass
+
     # ออกจากเกม --> ตัดระบบ keyboard
 
     def _on_keyboard_closed(self):
         self._keyboard.unbind(on_key_down=self._on_key_down)
         self._keyboard.unbind(on_key_up=self._on_key_up)
         self._keyboard = None
+
     # ตอนเอานิ้วกดปุ่ม
 
     def _on_key_down(self, keyboard, keycode, text, modifiers):
         self.keysPressed.add(text)
+
     # ตอนเอานิ้วออก
 
     def _on_key_up(self, keyboard, keycode):
@@ -204,41 +239,41 @@ class GameMain(Screen):
             self._entities.remove(entity)
             self.canvas.remove(entity._instruction)
 
-    # Word Display
-
+    # Word Collection
     @property
     def get_items(self):
         return self._get_items
-    # เพิ่มตัวอักษรหลังเก็บ
 
+    # เพิ่มตัวอักษรหลังเก็บ
     def add_items(self, value):
         self._get_items += value
-    # Eraser
 
+    # Eraser
     def clear_items(self):
         self._get_items = ""
 
     # refresh word and display word that have been gotten
     def refresh_word(self, is_alpha):
         if len(self.get_items) < len(self.word_rand):
-            self._word_label.text = self._get_items + " _ " * \
-                (len(self.word_rand) - len(self.get_items))
-            print(self._word_label.texture.size)
-            print(self._word_instruction.pos[0])
-            # print(is_alpha)
+            self._word_label.text = self._get_items + " _ " * (
+                len(self.word_rand) - len(self.get_items)
+            )
             if not is_alpha and self.level == "easy":
-                self._word_label.text = self.word_rand[0].upper(
-                ) + "_ "*(len(self.word_rand) - 1)
+                self._word_label.text = self.word_rand[0].upper() + "_ " * (
+                    len(self.word_rand) - 1
+                )
                 self.add_items(self.word_rand[0].upper())
             self._word_label.refresh()
             self._word_instruction.texture = self._word_label.texture
             self._word_instruction.size = self._word_label.texture.size
             self._word_instruction.pos = (
-                (Window.width/2) - (self._word_label.texture.size[0]/2), Window.height - 70)
+                (Window.width / 2) - (self._word_label.texture.size[0] / 2),
+                Window.height - 70,
+            )
 
         elif self.get_items == self.word_rand.upper():
             self._score += len(self.word_rand)
-            self._score_label.text = F"Score : {self._score}"
+            self._score_label.text = f"Score : {self._score}"
             self._score_label.refresh()
             self._score_instruction.texture = self._score_label.texture
             self._score_instruction.size = self._score_label.texture.size
@@ -246,57 +281,60 @@ class GameMain(Screen):
             self.clear_items()
             self.word = self._df[self.m].sample()
             self.word_rand = (self.word["Word"].to_string(index=False)).strip()
-            self.def_word = (
-                self.word["Definition"].to_string(index=False)).lstrip()
+            self.def_word = (self.word["Definition"].to_string(index=False)).lstrip()
             if self.level == "easy":
-                self._word_label.text = self.word_rand[0].upper(
-                ) + "_ "*(len(self.word_rand) - 1)
+                self._word_label.text = self.word_rand[0].upper() + "_ " * (
+                    len(self.word_rand) - 1
+                )
                 self.add_items(self.word_rand[0].upper())
             else:
-                self._word_label.text = "_ "*len(self.word_rand)
+                self._word_label.text = "_ " * len(self.word_rand)
 
             self._word_label.refresh()
             self._word_instruction.texture = self._word_label.texture
             self._word_instruction.size = self._word_label.texture.size
             self._word_instruction.pos = (
-                (Window.width/2) - (self._word_label.texture.size[0]/2), Window.height - 70)
+                (Window.width / 2) - (self._word_label.texture.size[0] / 2),
+                Window.height - 70,
+            )
 
             self._def_label.text = self.def_word
             self._def_label.refresh()
             self._definition_instruction.texture = self._def_label.texture
             self._definition_instruction.size = self._def_label.texture.size
             self._definition_instruction.pos = (
-                (Window.width/2) - (self._def_label.texture.size[0]/2), Window.height - 90)
-            print(self.word_rand)
+                (Window.width / 2) - (self._def_label.texture.size[0] / 2),
+                Window.height - 90,
+            )
+
         else:
             self.clear_items()
             if self.level == "easy":
-                self._word_label.text = self.word_rand[0].upper(
-                ) + "_ "*(len(self.word_rand) - 1)
+                self._word_label.text = self.word_rand[0].upper() + "_ " * (
+                    len(self.word_rand) - 1
+                )
                 self.add_items(self.word_rand[0].upper())
             else:
-                self._word_label.text = "_ "*len(self.word_rand)
+                self._word_label.text = "_ " * len(self.word_rand)
             self._word_label.refresh()
             self._word_instruction.texture = self._word_label.texture
 
             self.health -= 1
-            self._hp_display.source = F"image/hp/hp{self.health}.png"
+            self._hp_display.source = f"image/hp/hp{self.health}.png"
             if self.health == 0:
                 self.play_again()
 
-        # self._word_instruction.pos = (self._word_instruction.pos, Window.height - 70)
-
     # Bomb"s result
     def half_score(self):
-        self._score = int(self._score/2)
-        self._score_label.text = F"Score : {self._score}"
+        self._score = int(self._score / 2)
+        self._score_label.text = f"Score : {self._score}"
         self._score_label.refresh()
         self._score_instruction.texture = self._score_label.texture
         self._score_instruction.size = self._score_label.texture.size
 
     # เริ่มเกม
     def start_game_render(self):
-        Clock.schedule_interval(self._on_frame, 1/40)
+        Clock.schedule_interval(self._on_frame, 1 / 40)
         Clock.schedule_interval(self.spawn_items, 3)
         Clock.schedule_interval(self.spawn_answer, 4)
 
@@ -311,18 +349,41 @@ class GameMain(Screen):
         if self._isPause:
             self._isPause = not self._isPause
             self.freeze_game()
-            self.resume_btn = Button(size_hint=(None, None), size=(200, 70), pos=(Window.width/2 - 200, Window.height/2 - 230),
-                                     text="Resume", font_name="impact", font_size=30, outline_color=(0, 0, 0), outline_width=2)
+            self.resume_btn = Button(
+                size_hint=(None, None),
+                size=(200, 70),
+                pos=(Window.width / 2 - 200, Window.height / 2 - 230),
+                text="Resume",
+                font_name="impact",
+                font_size=30,
+                outline_color=(0, 0, 0),
+                outline_width=2,
+            )
             self.resume_btn.bind(on_press=self.pause)
             self.add_widget(self.resume_btn)
 
-            self.to_level_scn_btn = Button(size_hint=(None, None), size=(200, 70), pos=(
-                Window.width/2, Window.height/2 - 230), text="Back To Level", font_name="impact", font_size=30, outline_color=(0, 0, 0), outline_width=2)
+            self.to_level_scn_btn = Button(
+                size_hint=(None, None),
+                size=(200, 70),
+                pos=(Window.width / 2, Window.height / 2 - 230),
+                text="Back To Level",
+                font_name="impact",
+                font_size=30,
+                outline_color=(0, 0, 0),
+                outline_width=2,
+            )
             self.to_level_scn_btn.bind(on_press=self.change_to_level_screen)
             self.add_widget(self.to_level_scn_btn)
 
-            self.meme_image = Image(source="image/meme/pause_menu.jpg", size_hint=(None, None), size=(
-                700, Window.height), pos=(Window.width/2 - 350, Window.height/2 - Window.height/4 - 70))
+            self.meme_image = Image(
+                source="image/meme/pause_menu.jpg",
+                size_hint=(None, None),
+                size=(700, Window.height),
+                pos=(
+                    Window.width / 2 - 350,
+                    Window.height / 2 - Window.height / 4 - 70,
+                ),
+            )
             self.add_widget(self.meme_image)
 
         else:
@@ -332,21 +393,33 @@ class GameMain(Screen):
             self.remove_widget(self.meme_image)
             self._isPause = not self._isPause
 
-     # กลับไปหน้าเลือกระดับความยาก
+    # กลับไปหน้าเลือกระดับความยาก
     def change_to_level_screen(self, value):
         self.manager.current = "game_level"
         self.manager.transition.direction = "right"
 
     def play_again(self):
         self.freeze_game()
-        self.to_level_scn_btn = Button(size_hint=(None, None), size=(200, 70), pos=(
-            Window.width/2 - 100, Window.height/2 - 230), text="Back To Level", font_name="impact", font_size=30, outline_color=(0, 0, 0), outline_width=2)
+        self.to_level_scn_btn = Button(
+            size_hint=(None, None),
+            size=(200, 70),
+            pos=(Window.width / 2 - 100, Window.height / 2 - 230),
+            text="Back To Level",
+            font_name="impact",
+            font_size=30,
+            outline_color=(0, 0, 0),
+            outline_width=2,
+        )
         self.to_level_scn_btn.bind(on_press=self.change_to_level_screen)
         self.add_widget(self.to_level_scn_btn)
 
         rand_image = random.randint(1, 8)
-        self.meme_image = Image(source=F"image/meme/cut-scene/{rand_image}.png", size_hint=(None, None), size=(
-            700, Window.height - 200), pos=(Window.width/2 - 350, Window.height/2 - Window.height/4))
+        self.meme_image = Image(
+            source=f"image/meme/cut-scene/{rand_image}.png",
+            size_hint=(None, None),
+            size=(700, Window.height - 200),
+            pos=(Window.width / 2 - 350, Window.height / 2 - Window.height / 4),
+        )
         self.add_widget(self.meme_image)
 
 

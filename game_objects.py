@@ -1,12 +1,14 @@
 from kivy.graphics import Rectangle
 
+
 class Entity(object):
     def __init__(self):
         self._pos = (0, 0)
         self._size = (0, 0)
         self._source = "image/playerfr1.png"
         self._instruction = Rectangle(
-            pos=self._pos, size=self._size, source=self._source)
+            pos=self._pos, size=self._size, source=self._source
+        )
 
     @property
     def pos(self):
@@ -37,14 +39,13 @@ class Entity(object):
 
 
 class Player(Entity):
-    def __init__(self,game, **kwargs):
+    def __init__(self, game, **kwargs):
         super().__init__(**kwargs)
         self.game = game
         self.playerState = 0
-        self.size = (150,160)
+        self.size = (150, 160)
         # self.source = "image/player.png"
         self.game.bind(on_frame=self.move_step)
-
 
     def stop_callbacks(self):
         self.game.unbind(on_frame=self.move_step)
@@ -59,39 +60,35 @@ class Player(Entity):
 
         if "w" in self.game.keysPressed:
             if self.playerState < 7:
-                currentpic = F"image/playerfr{self.playerState + 1}.png"
-                print("w")
+                currentpic = f"image/playerfr{self.playerState + 1}.png"
                 self.playerState += 1
             else:
                 self.playerState = 0
-                currentpic = F"image/playerfr{self.playerState + 1}.png"
+                currentpic = f"image/playerfr{self.playerState + 1}.png"
             currenty += step_size
         if "s" in self.game.keysPressed:
             if self.playerState < 7:
-                currentpic = F"image/playerfr{self.playerState + 1}.png"
-                print("s")
+                currentpic = f"image/playerfr{self.playerState + 1}.png"
                 self.playerState += 1
             else:
                 self.playerState = 0
-                currentpic = F"image/playerfr{self.playerState + 1}.png"
+                currentpic = f"image/playerfr{self.playerState + 1}.png"
             currenty -= step_size
         if "a" in self.game.keysPressed:
             if self.playerState < 7:
-                currentpic = F"image/playerfr{self.playerState + 1}.png"
-                print("a")
+                currentpic = f"image/playerfr{self.playerState + 1}.png"
                 self.playerState += 1
             else:
                 self.playerState = 0
-                currentpic = F"image/playerfr{self.playerState + 1}.png"
+                currentpic = f"image/playerfr{self.playerState + 1}.png"
             currentx -= step_size
         if "d" in self.game.keysPressed:
             if self.playerState < 7:
-                currentpic = F"image/playerfr{self.playerState + 1}.png"
-                print("d")
+                currentpic = f"image/playerfr{self.playerState + 1}.png"
                 self.playerState += 1
             else:
                 self.playerState = 0
-                currentpic = F"image/playerfr{self.playerState + 1}.png"
+                currentpic = f"image/playerfr{self.playerState + 1}.png"
             currentx += step_size
 
         self.pos = (currentx, currenty)
@@ -106,7 +103,7 @@ class Items(Entity):
         self.item_type = item_type
         self.size = (50, 50)
         self.pos = pos
-        self.source = F"image/asset/{item_type}.jpg"
+        self.source = f"image/asset/{item_type}.jpg"
         self.game.bind(on_frame=self.move_step)
 
     def stop_callbacks(self):
@@ -117,10 +114,8 @@ class Items(Entity):
             if e == self.game.player:
                 self.stop_callbacks()
                 self.game.remove_entity(self)
-                print(F"collide! {self.item_type}")
                 if self.item_type == "Bomb":
                     self.game.half_score()
-                    print("BOMB")
                     is_alpha = False
                 elif self.item_type == "Eraser":
                     self.game.clear_items()
@@ -129,9 +124,8 @@ class Items(Entity):
                     self.game.add_items(self.item_type)
                     is_alpha = True
                 self.game.refresh_word(is_alpha)
-                print(self.game.get_items)
                 return
         step_size = self._speed * dt
         new_x = self.pos[0]
         new_y = self.pos[1] - step_size
-        self.pos = (new_x, new_y)         
+        self.pos = (new_x, new_y)
